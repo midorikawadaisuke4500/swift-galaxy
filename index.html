@@ -128,7 +128,8 @@
 
     <script>
         // Simple Auth Logic
-        function checkAuth() {
+        function checkAuth(e) {
+            if (e) e.preventDefault();
             const u = document.getElementById('auth-user').value;
             const p = document.getElementById('auth-pass').value;
             if (u === 'midorikawa' && p === 'midorikawa') {
