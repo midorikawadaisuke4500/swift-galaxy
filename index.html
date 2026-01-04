@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v6)</title>
+    <title>ハワイ旅程ダッシュボード 2026 (Final v8)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -130,10 +130,16 @@
 
     <script>
         // Simple Auth Logic
+        // Simple Auth Logic
         function checkAuth(e) {
             if (e) e.preventDefault();
-            const u = document.getElementById('auth-user').value;
-            const p = document.getElementById('auth-pass').value;
+            const uInput = document.getElementById('auth-user').value;
+            const pInput = document.getElementById('auth-pass').value;
+
+            // Normalize: remove whitespace and make case-insensitive (kindness for mobile)
+            const u = uInput ? uInput.trim().toLowerCase() : '';
+            const p = pInput ? pInput.trim().toLowerCase() : '';
+
             if (u === 'midorikawa' && p === 'midorikawa') {
                 try {
                     localStorage.setItem('hawaii_auth_v8', 'true');
