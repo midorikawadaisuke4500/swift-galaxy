@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v4)</title>
+    <title>ハワイ旅程ダッシュボード 2026 (Final v5)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -101,7 +101,7 @@
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v4)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v5)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -155,9 +155,6 @@
         // Check persistent auth immediately
         if (localStorage.getItem('hawaii_auth_v4') === 'true') {
             document.addEventListener('DOMContentLoaded', showApp);
-            // Also add a style to hide overlay initially to prevent flash if possible, 
-            // but DOMContentLoaded is safer for app.init dependencies.
-            // For better UX, we'll handle the flash in CSS or just rely on fast JS execution.
             document.write('<style>#auth-overlay{display:none!important}</style>');
         }
 
@@ -203,7 +200,7 @@
                     budgetEst: 100,
                     timeline: [
                         { time: "07:00", type: "bus", title: "TheBus (2番/23番)", desc: "クヒオ通りから乗車。ローカル気分で登山口へ。", map: null },
-                        { time: "07:30", type: "activity", title: "Diamond Head", desc: "【要予約】朝日ハイキング。", map: "https://www.google.com/maps/search/?api=1&query=Diamond+Head+State+Monument" },
+                        { time: "08:00", type: "activity", title: "Diamond Head", desc: "【予約確定】8:00〜9:00 入場。\nQRコードを表示して入場。", map: "https://www.google.com/maps/search/?api=1&query=Diamond+Head+State+Monument", ticket: "./images/diamond_head_qr.png" },
                         { time: "09:00", type: "walk", title: "徒歩 (25分)", desc: "丘を下りてモンサラット通りへ。絶景散歩。", map: null },
                         { time: "09:30", type: "food", title: "Bogart's Cafe", desc: "【ブランチ】フライドライスでエネルギー補給。", map: "https://www.google.com/maps/search/?api=1&query=Bogart's+Cafe+Honolulu" },
                         { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダ(徒歩15分移動)。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
@@ -355,7 +352,10 @@
                         if (t.type === 'walk') { icon = '🚶'; color = 'bg-green-50 text-green-600'; }
                         if (t.type === 'transport') { icon = '🚕'; color = 'bg-gray-100 text-gray-600'; }
 
-                        return `<div class="relative pl-8 pb-8 border-l-2 border-stone-100 last:border-0"><div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full ${color} flex items-center justify-center border-4 border-white shadow-sm text-sm z-10">${icon}</div><div class="bg-white p-4 rounded-xl border border-stone-100 shadow-sm"><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-stone-800 text-sm">${t.title}</h4><span class="text-[10px] bg-stone-50 px-2 py-1 rounded text-stone-400">${t.time}</span></div><p class="text-xs text-stone-600 mb-3">${t.desc}</p>${t.map ? `<a href="${t.map}" target="_blank" class="inline-flex items-center text-xs text-teal-600 font-bold py-1 px-2 bg-teal-50 rounded">📍 Map</a>` : ''}</div></div>`;
+                        // Ticket Logic
+                        const ticketHtml = t.ticket ? `<div class="mt-3"><div class="text-[10px] font-bold text-stone-500 mb-1">TICKET</div><img src="${t.ticket}" class="w-full max-w-[200px] rounded-lg border border-stone-200 shadow-sm" alt="Ticket"></div>` : '';
+
+                        return `<div class="relative pl-8 pb-8 border-l-2 border-stone-100 last:border-0"><div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full ${color} flex items-center justify-center border-4 border-white shadow-sm text-sm z-10">${icon}</div><div class="bg-white p-4 rounded-xl border border-stone-100 shadow-sm"><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-stone-800 text-sm">${t.title}</h4><span class="text-[10px] bg-stone-50 px-2 py-1 rounded text-stone-400">${t.time}</span></div><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${t.desc}</p>${t.map ? `<a href="${t.map}" target="_blank" class="inline-flex items-center text-xs text-teal-600 font-bold py-1 px-2 bg-teal-50 rounded hover:bg-teal-100 transition-colors">📍 Map</a>` : ''}${ticketHtml}</div></div>`;
                     }).join('');
                     return `<div class="mb-4"><h2 class="text-xl font-bold text-teal-800">Day ${current.id}: ${current.title}</h2><p class="text-stone-500 text-xs">${current.summary}</p></div><div class="flex overflow-x-auto no-scrollbar gap-3 pb-4 mb-2 snap-x px-1">${tabs}</div><div class="bg-stone-50 p-5 rounded-2xl border border-stone-200"><div class="mt-2">${timeline}</div></div>`;
                 },
