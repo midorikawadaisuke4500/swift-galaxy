@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ハワイ旅程ダッシュボード 2026 (Final v2)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -56,15 +55,6 @@
         html {
             scroll-behavior: smooth;
         }
-
-        /* Safe Area Support for iPhone */
-        .mb-safe {
-            margin-bottom: env(safe-area-inset-bottom, 20px);
-        }
-
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom, 20px);
-        }
     </style>
 </head>
 
@@ -89,14 +79,14 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-stone-100 pt-[env(safe-area-inset-top)] hidden"
+    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-stone-100 hidden"
         id="main-nav">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col">
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v2)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -153,11 +143,11 @@
             days: [
                 {
                     id: 1, date: "1/6(火)", title: "到着 & アサイー", icon: "🛬",
-                    summary: "到着後、ナル・ヘルスバーでアサイー。夜は極上イタリアン。",
+                    summary: "到着後、アサイーで軽めのランチ。夜は極上イタリアン。",
                     budgetEst: 100,
                     timeline: [
                         { time: "11:30", type: "hotel", title: "荷物預け", desc: "シェラトンへ。", map: null },
-                        { time: "12:00", type: "food", title: "Nalu Health Bar & Cafe", desc: "【ランチ】ワイキキ店でフレッシュなアサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
+                        { time: "12:00", type: "food", title: "Tropical Tribe", desc: "【ランチ】ブラジル本場の濃厚アサイーでさっぱりと。", map: "https://www.google.com/maps/search/?api=1&query=Tropical+Tribe" },
                         { time: "15:00", type: "hotel", title: "チェックイン", desc: "シャワーを浴びてリフレッシュ。", map: null },
                         { time: "19:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】ウニのクリームパスタ ($80〜)。", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare" }
                     ]
@@ -176,13 +166,13 @@
                 },
                 {
                     id: 3, date: "1/8(木)", title: "ダイヤヘッド(車無)", icon: "⛰️",
-                    summary: "朝ハイキング。午後は近場でゆったり中華。",
+                    summary: "朝ハイキング。モンサラット通りでグルメ散策。",
                     budgetEst: 100,
                     timeline: [
                         { time: "07:00", type: "transport", title: "Uberで移動", desc: "レンタカーなしで移動。", map: null },
                         { time: "07:30", type: "activity", title: "Diamond Head", desc: "【要予約】朝日ハイキング。", map: "https://www.google.com/maps/search/?api=1&query=Diamond+Head+State+Monument" },
                         { time: "09:30", type: "food", title: "Bogart's Cafe", desc: "【ブランチ】フライドライスなど。", map: "https://www.google.com/maps/search/?api=1&query=Bogart's+Cafe+Honolulu" },
-                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】名物マラサダ。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
+                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダをゲット。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
                         { time: "PM", type: "relax", title: "フリータイム", desc: "ワイキキビーチやホテルプールへ。", map: null },
                         { time: "19:00", type: "food", title: "Kirin Restaurant", desc: "【ディナー】カニ料理の名店。", map: "https://www.google.com/maps/search/?api=1&query=Kirin+Restaurant+Waikiki" }
                     ]
@@ -208,11 +198,11 @@
                     ]
                 },
                 {
-                    id: 6, date: "1/11(日)", title: "海チル & マイタイ", icon: "🍹",
-                    summary: "ピンクパレスでのんびり。",
+                    id: 6, date: "1/11(日)", title: "アサイー & マイタイ", icon: "🍹",
+                    summary: "アサイーランチとピンクパレスで海チル。",
                     budgetEst: 80,
                     timeline: [
-                        { time: "11:30", type: "relax", title: "ビーチ / フリー", desc: "のんびり起床。", map: null },
+                        { time: "11:00", type: "food", title: "Nalu Health Bar", desc: "【ランチ】オーガニックアサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
                         { time: "14:00", type: "food", title: "Mai Tai Bar", desc: "【カフェ/酒】ピンクパレスでトリュフポテトとマイタイ。", map: "https://www.google.com/maps/search/?api=1&query=Mai+Tai+Bar+Royal+Hawaiian" },
                         { time: "Night", type: "relax", title: "フリーディナー", desc: "お腹の空き具合に合わせて。", map: null }
                     ]
@@ -230,12 +220,12 @@
                     ]
                 },
                 {
-                    id: 8, date: "1/13(火)", title: "完全フリー & 肉", icon: "🆓",
-                    summary: "予備日。絶品ステーキ弁当ランチとお土産探し。",
-                    budgetEst: 70,
+                    id: 8, date: "1/13(火)", title: "海沿いステーキ", icon: "🍖",
+                    summary: "予備日。ランチに海小屋ステーキを。",
+                    budgetEst: 50,
                     timeline: [
                         { time: "11:30", type: "food", title: "Steak Shack", desc: "【ランチ】海小屋の絶品ステーキ弁当。", map: "https://www.google.com/maps/search/?api=1&query=Steak+Shack+Waikiki" },
-                        { time: "PM", type: "relax", title: "Free Time", desc: "最後のショッピングや海。", map: null }
+                        { time: "PM", type: "shop", title: "フリー / 買い物", desc: "チーズケーキファクトリーやウルフギャングなど。", map: null }
                     ]
                 },
                 {
