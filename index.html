@@ -134,7 +134,7 @@
             const u = document.getElementById('auth-user').value;
             const p = document.getElementById('auth-pass').value;
             if (u === 'midorikawa' && p === 'midorikawa') {
-                localStorage.setItem('hawaii_auth_v4', 'true');
+                localStorage.setItem('hawaii_auth_v6', 'true');
                 showApp();
             } else {
                 document.getElementById('auth-error').classList.remove('hidden');
@@ -144,18 +144,28 @@
         }
 
         function showApp() {
-            document.getElementById('auth-overlay').style.display = 'none';
-            document.getElementById('main-nav').classList.remove('hidden');
-            document.getElementById('app-content').classList.remove('hidden');
-            document.getElementById('main-footer').classList.remove('hidden');
+            const overlay = document.getElementById('auth-overlay');
+            if (overlay) overlay.style.display = 'none';
+
+            ['main-nav', 'app-content', 'main-footer'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('hidden');
+            });
+
             document.body.classList.remove('overflow-hidden');
-            app.init();
+
+            // Ensure app handles re-initialization gracefully
+            if (window.app && app.init) app.init();
         }
 
         // Check persistent auth immediately
-        if (localStorage.getItem('hawaii_auth_v4') === 'true') {
-            document.addEventListener('DOMContentLoaded', showApp);
-            document.write('<style>#auth-overlay{display:none!important}</style>');
+        // Safe to run here because script is at the end of body
+        try {
+            if (localStorage.getItem('hawaii_auth_v6') === 'true') {
+                showApp();
+            }
+        } catch (e) {
+            console.error('Auth check failed', e);
         }
 
         const tripData = {
