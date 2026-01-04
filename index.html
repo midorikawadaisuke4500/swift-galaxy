@@ -129,9 +129,10 @@
     </footer>
 
     <script>
+        console.log('Hawaii Trip Script Loaded v8.1');
+
         // Simple Auth Logic
-        // Simple Auth Logic
-        function checkAuth(e) {
+        window.checkAuth = function(e) {
             if (e) e.preventDefault();
             const uInput = document.getElementById('auth-user').value;
             const pInput = document.getElementById('auth-pass').value;
@@ -152,9 +153,9 @@
                 document.getElementById('auth-user').classList.add('border-red-500');
                 document.getElementById('auth-pass').classList.add('border-red-500');
             }
-        }
+        };
 
-        function showApp() {
+        window.showApp = function() {
             const overlay = document.getElementById('auth-overlay');
             if (overlay) overlay.style.display = 'none';
 
@@ -167,7 +168,7 @@
 
             // Ensure app handles re-initialization gracefully
             if (window.app && app.init) app.init();
-        }
+        };
 
 
 
