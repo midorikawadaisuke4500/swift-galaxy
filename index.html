@@ -134,17 +134,31 @@
             const u = document.getElementById('auth-user').value;
             const p = document.getElementById('auth-pass').value;
             if (u === 'midorikawa' && p === 'midorikawa') {
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('main-nav').classList.remove('hidden');
-                document.getElementById('app-content').classList.remove('hidden');
-                document.getElementById('main-footer').classList.remove('hidden');
-                document.body.classList.remove('overflow-hidden');
-                app.init();
+                localStorage.setItem('hawaii_auth_v4', 'true');
+                showApp();
             } else {
                 document.getElementById('auth-error').classList.remove('hidden');
                 document.getElementById('auth-user').classList.add('border-red-500');
                 document.getElementById('auth-pass').classList.add('border-red-500');
             }
+        }
+
+        function showApp() {
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('main-footer').classList.remove('hidden');
+            document.body.classList.remove('overflow-hidden');
+            app.init();
+        }
+
+        // Check persistent auth immediately
+        if (localStorage.getItem('hawaii_auth_v4') === 'true') {
+            document.addEventListener('DOMContentLoaded', showApp);
+            // Also add a style to hide overlay initially to prevent flash if possible, 
+            // but DOMContentLoaded is safer for app.init dependencies.
+            // For better UX, we'll handle the flash in CSS or just rely on fast JS execution.
+            document.write('<style>#auth-overlay{display:none!important}</style>');
         }
 
         const tripData = {
