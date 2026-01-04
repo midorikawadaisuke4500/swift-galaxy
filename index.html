@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v5)</title>
+    <title>ハワイ旅程ダッシュボード 2026 (Final v6)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -101,7 +101,7 @@
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v5)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v6)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -177,26 +177,25 @@
                         { time: "12:00", type: "food", title: "Tropical Tribe", desc: "【ランチ】ディスカバリー・ベイ地下。濃厚アサイー。", map: "https://www.google.com/maps/search/?api=1&query=Tropical+Tribe" },
                         { time: "14:00", type: "walk", title: "徒歩 (10分)", desc: "チェックインへ戻る。", map: null },
                         { time: "15:00", type: "hotel", title: "チェックイン", desc: "シャワーを浴びてリフレッシュ。", map: null },
-                        { time: "18:30", type: "walk", title: "徒歩 (15分)", desc: "カラカウア通りを海沿いに散歩。", map: null },
-                        { time: "19:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】マリオット1F。ウニパスタ。", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare" }
+                        { time: "17:30", type: "walk", title: "徒歩 (15分)", desc: "カラカウア通りを海沿いに散歩。", map: null },
+                        { time: "18:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】マリオット1F。ウニパスタ。", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare" }
                     ]
                 },
                 {
-                    id: 2, date: "1/7(水)", title: "イルカ & プール", icon: "🐬",
-                    summary: "早朝アクティビティ後は、フリーランチとプールで回復。",
-                    budgetEst: 350,
+                    id: 2, date: "1/7(水)", title: "アサイー & マイタイ", icon: "🍹",
+                    summary: "【日程入れ替え】近場でゆったり。すべて徒歩圏内。",
+                    budgetEst: 80,
                     timeline: [
-                        { time: "06:30", type: "transport", title: "お迎え車", desc: "ロビー集合で西海岸へ。", map: null },
-                        { time: "07:00", type: "activity", title: "イルカ & シュノーケル", desc: "野生のイルカと泳ぐ体験。", map: null },
-                        { time: "13:00", type: "food", title: "フリー / 軽食", desc: "【ランチ】おむすび(いやす夢)など。", map: "https://www.google.com/maps/search/?api=1&query=Musubi+Cafe+Iyasume+Waikiki" },
-                        { time: "15:00", type: "relax", title: "インフィニティプール", desc: "ホテルでのんびり。", map: null },
-                        { time: "17:45", type: "walk", title: "徒歩 (10分)", desc: "クヒオ通り方面へ。", map: null },
-                        { time: "18:00", type: "food", title: "Hy's Steak House", desc: "【ディナー】クラシックステーキ。", map: "https://www.google.com/maps/search/?api=1&query=Hy's+Steak+House+Waikiki" }
+                        { time: "11:00", type: "walk", title: "徒歩 (5分)", desc: "ビーチウォーク方面へ。", map: null },
+                        { time: "11:10", type: "food", title: "Nalu Health Bar", desc: "【ランチ】アサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
+                        { time: "14:00", type: "walk", title: "徒歩 (3分)", desc: "お隣のピンクパレスへ。", map: null },
+                        { time: "14:10", type: "food", title: "Mai Tai Bar", desc: "【カフェ/酒】海風の中でマイタイ。", map: "https://www.google.com/maps/search/?api=1&query=Mai+Tai+Bar+Royal+Hawaiian" },
+                        { time: "Night", type: "relax", title: "フリーディナー", desc: "お腹の空き具合に合わせて。", map: null }
                     ]
                 },
                 {
                     id: 3, date: "1/8(木)", title: "DH & グルメ散歩", icon: "⛰️",
-                    summary: "TheBusで移動し、帰りはグルメ散歩。",
+                    summary: "TheBusで移動し、朝日ハイキング。",
                     budgetEst: 100,
                     timeline: [
                         { time: "07:00", type: "bus", title: "TheBus (2番/23番)", desc: "クヒオ通りから乗車。ローカル気分で登山口へ。", map: null },
@@ -237,15 +236,16 @@
                     ]
                 },
                 {
-                    id: 6, date: "1/11(日)", title: "アサイー & マイタイ", icon: "🍹",
-                    summary: "近場でゆったり。すべて徒歩圏内。",
-                    budgetEst: 80,
+                    id: 6, date: "1/11(日)", title: "シーライフ P & ステーキ", icon: "🐬",
+                    summary: "シーライフパークでイルカ体験。",
+                    budgetEst: 350,
                     timeline: [
-                        { time: "11:00", type: "walk", title: "徒歩 (5分)", desc: "ビーチウォーク方面へ。", map: null },
-                        { time: "11:10", type: "food", title: "Nalu Health Bar", desc: "【ランチ】アサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
-                        { time: "14:00", type: "walk", title: "徒歩 (3分)", desc: "お隣のピンクパレスへ。", map: null },
-                        { time: "14:10", type: "food", title: "Mai Tai Bar", desc: "【カフェ/酒】海風の中でマイタイ。", map: "https://www.google.com/maps/search/?api=1&query=Mai+Tai+Bar+Royal+Hawaiian" },
-                        { time: "Night", type: "relax", title: "フリーディナー", desc: "お腹の空き具合に合わせて。", map: null }
+                        { time: "08:00", type: "bus", title: "送迎バス (Pickup)", desc: "指定場所からシーライフパークへ。", map: null },
+                        { time: "09:00", type: "activity", title: "Sea Life Park", desc: "ドルフィン & シュノーケル体験。", map: "https://www.google.com/maps/search/?api=1&query=Sea+Life+Park+Hawaii" },
+                        { time: "15:00", type: "bus", title: "ワイキキ戻り", desc: "送迎バスで帰還。", map: null },
+                        { time: "16:00", type: "relax", title: "ホテル休憩", desc: "シャワーを浴びて着替え。", map: null },
+                        { time: "17:45", type: "walk", title: "徒歩 (10分)", desc: "クヒオ通り方面へ。", map: null },
+                        { time: "18:00", type: "food", title: "Hy's Steak House", desc: "【ディナー】クラシックステーキ。", map: "https://www.google.com/maps/search/?api=1&query=Hy's+Steak+House+Waikiki" }
                     ]
                 },
                 {
@@ -372,7 +372,7 @@
             toggleCheck(idx) { tripData.packing[idx].checked = !tripData.packing[idx].checked; this.render(); },
             initCharts() {
                 const ctx = document.getElementById('budgetChart');
-                if (ctx) new Chart(ctx, { type: 'bar', data: { labels: tripData.days.slice(0, 9).map(d => `Day ${d.id}`), datasets: [{ data: tripData.days.slice(0, 9).map(d => d.budgetEst), backgroundColor: '#ccfbf1', borderColor: '#0d9488', borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } } });
+                if (ctx) new Chart(ctx, { type: 'bar', data: { labels: tripData.days.slice(0, 9).map(d => `Day ${d.id}`), datasets: [{ data: tripData.days.slice(0, 9).map(d => d.budgetEst), backgroundColor: '#ccfbf1', borderColor: '#0d9488', borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } } } });
             }
         };
     </script>
