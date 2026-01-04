@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v2)</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ハワイ旅程ダッシュボード 2026 (Final v3)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -55,6 +56,19 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* Safe Area Support */
+        .mb-safe {
+            margin-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        .pt-safe {
+            padding-top: env(safe-area-inset-top, 20px);
+        }
     </style>
 </head>
 
@@ -79,14 +93,14 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-stone-100 hidden"
+    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-stone-100 pt-[env(safe-area-inset-top)] hidden"
         id="main-nav">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col">
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v2)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v3)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -117,7 +131,6 @@
         function checkAuth() {
             const u = document.getElementById('auth-user').value;
             const p = document.getElementById('auth-pass').value;
-            // User requested 'midorikawa'
             if (u === 'midorikawa' && p === 'midorikawa') {
                 document.getElementById('auth-overlay').style.display = 'none';
                 document.getElementById('main-nav').classList.remove('hidden');
@@ -138,7 +151,7 @@
                 nights: 8,
                 hotel: "Sheraton Waikiki",
                 hotelMap: "https://www.google.com/maps/search/?api=1&query=Sheraton+Waikiki",
-                theme: "朝はホテルで優雅に。昼は軽め、夜は美食。"
+                theme: "JCBトロリーとウォーキングで風を感じる旅。"
             },
             days: [
                 {
@@ -147,9 +160,12 @@
                     budgetEst: 100,
                     timeline: [
                         { time: "11:30", type: "hotel", title: "荷物預け", desc: "シェラトンへ。", map: null },
-                        { time: "12:00", type: "food", title: "Tropical Tribe", desc: "【ランチ】ブラジル本場の濃厚アサイーでさっぱりと。", map: "https://www.google.com/maps/search/?api=1&query=Tropical+Tribe" },
+                        { time: "11:50", type: "walk", title: "徒歩 (10分)", desc: "ハワイの空気を感じながらワイキキ散策。", map: null },
+                        { time: "12:00", type: "food", title: "Tropical Tribe", desc: "【ランチ】ディスカバリー・ベイ地下。濃厚アサイー。", map: "https://www.google.com/maps/search/?api=1&query=Tropical+Tribe" },
+                        { time: "14:00", type: "walk", title: "徒歩 (10分)", desc: "チェックインへ戻る。", map: null },
                         { time: "15:00", type: "hotel", title: "チェックイン", desc: "シャワーを浴びてリフレッシュ。", map: null },
-                        { time: "19:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】ウニのクリームパスタ ($80〜)。", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare" }
+                        { time: "18:30", type: "walk", title: "徒歩 (15分)", desc: "カラカウア通りを海沿いに散歩。", map: null },
+                        { time: "19:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】マリオット1F。ウニパスタ。", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare" }
                     ]
                 },
                 {
@@ -157,104 +173,120 @@
                     summary: "早朝アクティビティ後は、フリーランチとプールで回復。",
                     budgetEst: 350,
                     timeline: [
-                        { time: "06:30", type: "transport", title: "お迎え出発", desc: "西海岸へ遠征。", map: null },
+                        { time: "06:30", type: "transport", title: "お迎え車", desc: "ロビー集合で西海岸へ。", map: null },
                         { time: "07:00", type: "activity", title: "イルカ & シュノーケル", desc: "野生のイルカと泳ぐ体験。", map: null },
-                        { time: "13:00", type: "food", title: "フリー / 軽食", desc: "【ランチ】おむすび(いやす夢)や、ホテル近くで軽く。", map: "https://www.google.com/maps/search/?api=1&query=Musubi+Cafe+Iyasume+Waikiki" },
+                        { time: "13:00", type: "food", title: "フリー / 軽食", desc: "【ランチ】おむすび(いやす夢)など。", map: "https://www.google.com/maps/search/?api=1&query=Musubi+Cafe+Iyasume+Waikiki" },
                         { time: "15:00", type: "relax", title: "インフィニティプール", desc: "ホテルでのんびり。", map: null },
-                        { time: "18:00", type: "food", title: "Hy's Steak House", desc: "【ディナー】クラシックステーキ。ドレスコード有。", map: "https://www.google.com/maps/search/?api=1&query=Hy's+Steak+House+Waikiki" }
+                        { time: "17:45", type: "walk", title: "徒歩 (10分)", desc: "クヒオ通り方面へ。", map: null },
+                        { time: "18:00", type: "food", title: "Hy's Steak House", desc: "【ディナー】クラシックステーキ。", map: "https://www.google.com/maps/search/?api=1&query=Hy's+Steak+House+Waikiki" }
                     ]
                 },
                 {
-                    id: 3, date: "1/8(木)", title: "ダイヤヘッド(車無)", icon: "⛰️",
-                    summary: "朝ハイキング。モンサラット通りでグルメ散策。",
+                    id: 3, date: "1/8(木)", title: "DH & グルメ散歩", icon: "⛰️",
+                    summary: "朝ハイキング後、モンサラット通りを気持ちよく散歩。",
                     budgetEst: 100,
                     timeline: [
-                        { time: "07:00", type: "transport", title: "Uberで移動", desc: "レンタカーなしで移動。", map: null },
+                        { time: "07:00", type: "transport", title: "Uber/タクシー", desc: "登山口までは車で効率よく。", map: null },
                         { time: "07:30", type: "activity", title: "Diamond Head", desc: "【要予約】朝日ハイキング。", map: "https://www.google.com/maps/search/?api=1&query=Diamond+Head+State+Monument" },
-                        { time: "09:30", type: "food", title: "Bogart's Cafe", desc: "【ブランチ】フライドライスなど。", map: "https://www.google.com/maps/search/?api=1&query=Bogart's+Cafe+Honolulu" },
-                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダをゲット。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
-                        { time: "PM", type: "relax", title: "フリータイム", desc: "ワイキキビーチやホテルプールへ。", map: null },
-                        { time: "19:00", type: "food", title: "Kirin Restaurant", desc: "【ディナー】カニ料理の名店。", map: "https://www.google.com/maps/search/?api=1&query=Kirin+Restaurant+Waikiki" }
+                        { time: "09:00", type: "walk", title: "徒歩 (25分)", desc: "丘を下りてモンサラット通りへ。絶景散歩。", map: null },
+                        { time: "09:30", type: "food", title: "Bogart's Cafe", desc: "【ブランチ】フライドライスでエネルギー補給。", map: "https://www.google.com/maps/search/?api=1&query=Bogart's+Cafe+Honolulu" },
+                        { time: "10:15", type: "walk", title: "徒歩 (15分)", desc: "カパフル通りへ移動。", map: null },
+                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダ。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
+                        { time: "11:00", type: "walk", title: "徒歩 (45分)", desc: "ワイキキまで腹ごなしロングウォーク(約3.5km)。暑ければUberで。", map: null },
+                        { time: "PM", type: "relax", title: "フリータイム", desc: "プールやビーチでお昼寝。", map: null },
+                        { time: "19:00", type: "walk", title: "徒歩 (10分)", desc: "ハイアット方面へ。", map: null },
+                        { time: "19:15", type: "food", title: "Kirin Restaurant", desc: "【ディナー】中華の名店。", map: "https://www.google.com/maps/search/?api=1&query=Kirin+Restaurant+Waikiki" }
                     ]
                 },
                 {
-                    id: 4, date: "1/9(金)", title: "買い物 & 香り", icon: "🛍️",
-                    summary: "アラモアナでお買い物。夜はトリュフ。",
+                    id: 4, date: "1/9(金)", title: "アラモアナ(JCB)", icon: "🛍️",
+                    summary: "ピンクラインを活用してアラモアナへ。",
                     budgetEst: 200,
                     timeline: [
+                        { time: "10:00", type: "trolley", title: "ピンクライン (JCB無料)", desc: "ロイヤルハワイアンC〜アラモアナ(約20分)。2階席で風を感じて。", map: null },
                         { time: "AM", type: "shop", title: "Ala Moana Center", desc: "日本未上陸ブランド等をチェック。", map: null },
-                        { time: "13:00", type: "food", title: "Foodland Farms", desc: "【ランチ】人気のポキ丼をイートイン。", map: "https://www.google.com/maps/search/?api=1&query=Foodland+Farms+Ala+Moana" },
-                        { time: "18:00", type: "food", title: "Margotto Hawaii", desc: "【ディナー】トリュフ尽くしのコース。", map: "https://www.google.com/maps/search/?api=1&query=Margotto+Hawaii" }
+                        { time: "13:00", type: "food", title: "Foodland Farms", desc: "【ランチ】ポキ丼。", map: "https://www.google.com/maps/search/?api=1&query=Foodland+Farms+Ala+Moana" },
+                        { time: "14:00", type: "walk", title: "徒歩 (10分)", desc: "またはトロリーで帰宅。", map: null },
+                        { time: "17:45", type: "transport", title: "Uber/タクシー", desc: "夜なので車移動推奨。", map: null },
+                        { time: "18:00", type: "food", title: "Margotto Hawaii", desc: "【ディナー】トリュフ尽くし。", map: "https://www.google.com/maps/search/?api=1&query=Margotto+Hawaii" }
                     ]
                 },
                 {
-                    id: 5, date: "1/10(土)", title: "朝市 & ポキ", icon: "🥞",
-                    summary: "KCCファーマーズマーケット。夜は軽めに。",
+                    id: 5, date: "1/10(土)", title: "朝市 & 公園散歩", icon: "🥞",
+                    summary: "KCC朝市とカピオラニ公園散策。",
                     budgetEst: 50,
                     timeline: [
-                        { time: "08:30", type: "shop", title: "KCC Farmers Market", desc: "土曜限定。食べ歩きとショッピング。", map: "https://www.google.com/maps/search/?api=1&query=KCC+Farmers+Market" },
-                        { time: "PM", type: "relax", title: "フリー / 海チル", desc: "カピオラニ公園散策など。", map: null },
-                        { time: "18:00", type: "food", title: "Maguro Spot", desc: "【ディナー】新鮮なポキをテイクアウトしてラナイで。", map: "https://www.google.com/maps/search/?api=1&query=Maguro+Spot+Waikiki" }
+                        { time: "08:15", type: "transport", title: "Uber/TheBus", desc: "KCCへ移動。", map: null },
+                        { time: "08:30", type: "shop", title: "KCC Farmers Market", desc: "朝食調達とショッピング。", map: "https://www.google.com/maps/search/?api=1&query=KCC+Farmers+Market" },
+                        { time: "10:30", type: "walk", title: "徒歩 (30分)", desc: "帰りはカピオラニ公園を抜けて海沿いを散歩。", map: null },
+                        { time: "PM", type: "relax", title: "フリー / 海チル", desc: "ホテルラナイで読書など。", map: null },
+                        { time: "18:00", type: "walk", title: "徒歩 (5分)", desc: "クヒオ通りへ。", map: null },
+                        { time: "18:10", type: "food", title: "Maguro Spot", desc: "【ディナー】ポキをテイクアウト。", map: "https://www.google.com/maps/search/?api=1&query=Maguro+Spot+Waikiki" }
                     ]
                 },
                 {
                     id: 6, date: "1/11(日)", title: "アサイー & マイタイ", icon: "🍹",
-                    summary: "アサイーランチとピンクパレスで海チル。",
+                    summary: "近場でゆったり。すべて徒歩圏内。",
                     budgetEst: 80,
                     timeline: [
-                        { time: "11:00", type: "food", title: "Nalu Health Bar", desc: "【ランチ】オーガニックアサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
-                        { time: "14:00", type: "food", title: "Mai Tai Bar", desc: "【カフェ/酒】ピンクパレスでトリュフポテトとマイタイ。", map: "https://www.google.com/maps/search/?api=1&query=Mai+Tai+Bar+Royal+Hawaiian" },
+                        { time: "11:00", type: "walk", title: "徒歩 (5分)", desc: "ビーチウォーク方面へ。", map: null },
+                        { time: "11:10", type: "food", title: "Nalu Health Bar", desc: "【ランチ】アサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Nalu+Health+Bar+%26+Cafe+Waikiki" },
+                        { time: "14:00", type: "walk", title: "徒歩 (3分)", desc: "お隣のピンクパレスへ。", map: null },
+                        { time: "14:10", type: "food", title: "Mai Tai Bar", desc: "【カフェ/酒】海風の中でマイタイ。", map: "https://www.google.com/maps/search/?api=1&query=Mai+Tai+Bar+Royal+Hawaiian" },
                         { time: "Night", type: "relax", title: "フリーディナー", desc: "お腹の空き具合に合わせて。", map: null }
                     ]
                 },
                 {
                     id: 7, date: "1/12(月)", title: "ノースショア(車)", icon: "🚗",
-                    summary: "【レンタカー】ノースショア遠征と絶景バー。",
+                    summary: "【レンタカー】1日ドライブ。",
                     budgetEst: 150,
                     timeline: [
-                        { time: "09:00", type: "transport", title: "レンタカー出発", desc: "ハレイワ方面へドライブ。", map: null },
-                        { time: "11:30", type: "photo", title: "Laniakea Beach", desc: "亀との遭遇率高し。", map: "https://www.google.com/maps/search/?api=1&query=Laniakea+Beach" },
-                        { time: "12:30", type: "food", title: "Giovanni's Shrimp", desc: "【ランチ】元祖ガーリックシュリンプ。", map: "https://www.google.com/maps/search/?api=1&query=Giovanni's+Shrimp+Truck+Haleiwa" },
+                        { time: "09:00", type: "transport", title: "レンタカー出発", desc: "ハレイワ方面へ。", map: null },
+                        { time: "11:30", type: "photo", title: "Laniakea Beach", desc: "亀ウォッチング。", map: "https://www.google.com/maps/search/?api=1&query=Laniakea+Beach" },
+                        { time: "12:30", type: "food", title: "Giovanni's Shrimp", desc: "【ランチ】ガーリックシュリンプ。", map: "https://www.google.com/maps/search/?api=1&query=Giovanni's+Shrimp+Truck+Haleiwa" },
                         { time: "17:30", type: "transport", title: "ワイキキ戻り", desc: "車返却。", map: null },
-                        { time: "19:00", type: "food", title: "RumFire", desc: "【ディナー】海沿いの絶景バーで食事。", map: "https://www.google.com/maps/search/?api=1&query=RumFire+Waikiki" }
+                        { time: "19:00", type: "food", title: "RumFire", desc: "【ディナー】シェラトン内プールサイド。", map: "https://www.google.com/maps/search/?api=1&query=RumFire+Waikiki" }
                     ]
                 },
                 {
-                    id: 8, date: "1/13(火)", title: "海沿いステーキ", icon: "🍖",
-                    summary: "予備日。ランチに海小屋ステーキを。",
+                    id: 8, date: "1/13(火)", title: "ビーチ散歩 & 肉", icon: "🍖",
+                    summary: "オンザビーチのステーキ小屋へ。",
                     budgetEst: 50,
                     timeline: [
-                        { time: "11:30", type: "food", title: "Steak Shack", desc: "【ランチ】海小屋の絶品ステーキ弁当。", map: "https://www.google.com/maps/search/?api=1&query=Steak+Shack+Waikiki" },
-                        { time: "PM", type: "shop", title: "フリー / 買い物", desc: "チーズケーキファクトリーやウルフギャングなど。", map: null }
+                        { time: "11:00", type: "walk", title: "徒歩 (10分)", desc: "砂浜を歩いてフォートデラッシー方面へ。", map: null },
+                        { time: "11:30", type: "food", title: "Steak Shack", desc: "【ランチ】海小屋ステーキ弁当。その場で海を見ながら。", map: "https://www.google.com/maps/search/?api=1&query=Steak+Shack+Waikiki" },
+                        { time: "PM", type: "shop", title: "フリー / 買い物", desc: "最後のお土産探し。", map: null }
                     ]
                 },
                 {
                     id: 9, date: "1/14(水)", title: "最終日ディナー", icon: "🍽️",
-                    summary: "最後の夜は夜景の見えるステーキハウスで。",
+                    summary: "最後の移動もトロリー活用。",
                     budgetEst: 150,
                     timeline: [
-                        { time: "Eve", type: "food", title: "Signature Prime Steak", desc: "【ディナー】36階からの夜景とサンセット。", map: "https://www.google.com/maps/search/?api=1&query=The+Signature+Prime+Steak+%26+Seafood" },
-                        { time: "Night", type: "hotel", title: "パッキング", desc: "重量オーバーに注意。", map: null }
+                        { time: "17:00", type: "trolley", title: "ピンクライン (JCB無料)", desc: "アラモアナH前で下車し、ホテルへ直結。", map: null },
+                        { time: "17:30", type: "food", title: "Signature Prime Steak", desc: "【ディナー】36階からの夜景。", map: "https://www.google.com/maps/search/?api=1&query=The+Signature+Prime+Steak+%26+Seafood" },
+                        { time: "20:00", type: "transport", title: "Uber/タクシー", desc: "帰りは安全に車で。", map: null },
+                        { time: "Night", type: "hotel", title: "パッキング", desc: "荷造り。", map: null }
                     ]
                 },
                 {
                     id: 10, date: "1/15(木)", title: "帰国", icon: "✈️",
-                    summary: "ホノルル空港から日本へ。",
+                    summary: "空港へ。",
                     budgetEst: 0,
                     timeline: [
-                        { time: "08:00", type: "transport", title: "空港へ移動", desc: "Uber/タクシーで移動。", map: null },
-                        { time: "10:55", type: "transport", title: "JL791 出発", desc: "Mahalo!", map: null }
+                        { time: "08:00", type: "transport", title: "Uber/タクシー", desc: "空港へ移動。", map: null },
+                        { time: "10:55", type: "transport", title: "JL791 出発", desc: "Aloha 'Oe!", map: null }
                     ]
                 }
             ],
             packing: [
                 { item: "パスポート & eチケット", checked: false },
-                { item: "クレジットカード (JCB推奨)", checked: false },
+                { item: "JCBカード", checked: false, note: "ピンクライン無料乗車に必須" },
                 { item: "運転免許証 & 国際免許", checked: false, note: "Day7で必須" },
-                { item: "歯ブラシ & スリッパ", checked: false },
+                { item: "歩きやすい靴/サンダル", checked: false, note: "1時間歩ける靴" },
+                { item: "日焼け止め & 帽子", checked: false, note: "散歩の日差し対策" },
                 { item: "エコバッグ", checked: false },
-                { item: "上着/パーカー", checked: false, note: "冷房対策" },
-                { item: "襟付きシャツ & 長ズボン", checked: false, note: "男性ドレスコード用" }
+                { item: "上着/パーカー", checked: false, note: "冷房対策" }
             ]
         };
 
@@ -302,6 +334,10 @@
                         if (t.type === 'food') { icon = '🍽️'; color = 'bg-orange-50 text-orange-600'; }
                         if (t.type === 'activity') { icon = '🤿'; color = 'bg-blue-50 text-blue-600'; }
                         if (t.type === 'shop') { icon = '🛍️'; color = 'bg-pink-50 text-pink-600'; }
+                        if (t.type === 'trolley') { icon = '🚌'; color = 'bg-pink-100 text-pink-600'; }
+                        if (t.type === 'walk') { icon = '🚶'; color = 'bg-green-50 text-green-600'; }
+                        if (t.type === 'transport') { icon = '🚕'; color = 'bg-gray-100 text-gray-600'; }
+
                         return `<div class="relative pl-8 pb-8 border-l-2 border-stone-100 last:border-0"><div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full ${color} flex items-center justify-center border-4 border-white shadow-sm text-sm z-10">${icon}</div><div class="bg-white p-4 rounded-xl border border-stone-100 shadow-sm"><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-stone-800 text-sm">${t.title}</h4><span class="text-[10px] bg-stone-50 px-2 py-1 rounded text-stone-400">${t.time}</span></div><p class="text-xs text-stone-600 mb-3">${t.desc}</p>${t.map ? `<a href="${t.map}" target="_blank" class="inline-flex items-center text-xs text-teal-600 font-bold py-1 px-2 bg-teal-50 rounded">📍 Map</a>` : ''}</div></div>`;
                     }).join('');
                     return `<div class="mb-4"><h2 class="text-xl font-bold text-teal-800">Day ${current.id}: ${current.title}</h2><p class="text-stone-500 text-xs">${current.summary}</p></div><div class="flex overflow-x-auto no-scrollbar gap-3 pb-4 mb-2 snap-x px-1">${tabs}</div><div class="bg-stone-50 p-5 rounded-2xl border border-stone-200"><div class="mt-2">${timeline}</div></div>`;
@@ -322,8 +358,6 @@
                 if (ctx) new Chart(ctx, { type: 'bar', data: { labels: tripData.days.slice(0, 9).map(d => `Day ${d.id}`), datasets: [{ data: tripData.days.slice(0, 9).map(d => d.budgetEst), backgroundColor: '#ccfbf1', borderColor: '#0d9488', borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } } });
             }
         };
-        // Removed DOMContentLoaded auto-init, waiting for Auth
-        // document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
 
