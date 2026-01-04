@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v3)</title>
+    <title>ハワイ旅程ダッシュボード 2026 (Final v4)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -101,7 +101,7 @@
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v3)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v4)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -153,7 +153,7 @@
                 nights: 8,
                 hotel: "Sheraton Waikiki",
                 hotelMap: "https://www.google.com/maps/search/?api=1&query=Sheraton+Waikiki",
-                theme: "JCBトロリーとウォーキングで風を感じる旅。"
+                theme: "トロリー活用 & 景色を楽しむウォーキング。"
             },
             days: [
                 {
@@ -185,16 +185,15 @@
                 },
                 {
                     id: 3, date: "1/8(木)", title: "DH & グルメ散歩", icon: "⛰️",
-                    summary: "朝ハイキング後、モンサラット通りを気持ちよく散歩。",
+                    summary: "TheBusで移動し、帰りはグルメ散歩。",
                     budgetEst: 100,
                     timeline: [
-                        { time: "07:00", type: "transport", title: "Uber/タクシー", desc: "登山口までは車で効率よく。", map: null },
+                        { time: "07:00", type: "bus", title: "TheBus (2番/23番)", desc: "クヒオ通りから乗車。ローカル気分で登山口へ。", map: null },
                         { time: "07:30", type: "activity", title: "Diamond Head", desc: "【要予約】朝日ハイキング。", map: "https://www.google.com/maps/search/?api=1&query=Diamond+Head+State+Monument" },
                         { time: "09:00", type: "walk", title: "徒歩 (25分)", desc: "丘を下りてモンサラット通りへ。絶景散歩。", map: null },
                         { time: "09:30", type: "food", title: "Bogart's Cafe", desc: "【ブランチ】フライドライスでエネルギー補給。", map: "https://www.google.com/maps/search/?api=1&query=Bogart's+Cafe+Honolulu" },
-                        { time: "10:15", type: "walk", title: "徒歩 (15分)", desc: "カパフル通りへ移動。", map: null },
-                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダ。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
-                        { time: "11:00", type: "walk", title: "徒歩 (45分)", desc: "ワイキキまで腹ごなしロングウォーク(約3.5km)。暑ければUberで。", map: null },
+                        { time: "10:30", type: "food", title: "Leonard's Bakery", desc: "【おやつ】揚げたてマラサダ(徒歩15分移動)。", map: "https://www.google.com/maps/search/?api=1&query=Leonard's+Bakery" },
+                        { time: "11:00", type: "walk", title: "徒歩 (45分)", desc: "ワイキキまで腹ごなしロングウォーク(約3.5km)。", map: null },
                         { time: "PM", type: "relax", title: "フリータイム", desc: "プールやビーチでお昼寝。", map: null },
                         { time: "19:00", type: "walk", title: "徒歩 (10分)", desc: "ハイアット方面へ。", map: null },
                         { time: "19:15", type: "food", title: "Kirin Restaurant", desc: "【ディナー】中華の名店。", map: "https://www.google.com/maps/search/?api=1&query=Kirin+Restaurant+Waikiki" }
@@ -205,22 +204,22 @@
                     summary: "ピンクラインを活用してアラモアナへ。",
                     budgetEst: 200,
                     timeline: [
-                        { time: "10:00", type: "trolley", title: "ピンクライン (JCB無料)", desc: "ロイヤルハワイアンC〜アラモアナ(約20分)。2階席で風を感じて。", map: null },
+                        { time: "10:00", type: "trolley", title: "ピンクライン (JCB無料)", desc: "ロイヤルハワイアンC〜アラモアナ(約20分)。", map: null },
                         { time: "AM", type: "shop", title: "Ala Moana Center", desc: "日本未上陸ブランド等をチェック。", map: null },
                         { time: "13:00", type: "food", title: "Foodland Farms", desc: "【ランチ】ポキ丼。", map: "https://www.google.com/maps/search/?api=1&query=Foodland+Farms+Ala+Moana" },
-                        { time: "14:00", type: "walk", title: "徒歩 (10分)", desc: "またはトロリーで帰宅。", map: null },
-                        { time: "17:45", type: "transport", title: "Uber/タクシー", desc: "夜なので車移動推奨。", map: null },
-                        { time: "18:00", type: "food", title: "Margotto Hawaii", desc: "【ディナー】トリュフ尽くし。", map: "https://www.google.com/maps/search/?api=1&query=Margotto+Hawaii" }
+                        { time: "17:30", type: "walk", title: "徒歩 (15分)", desc: "カカアコ方面へ夕暮れ散歩。", map: null },
+                        { time: "18:00", type: "food", title: "Margotto Hawaii", desc: "【ディナー】トリュフ尽くし。", map: "https://www.google.com/maps/search/?api=1&query=Margotto+Hawaii" },
+                        { time: "20:30", type: "transport", title: "Uber/タクシー", desc: "夜遅いので帰りは車推奨。", map: null }
                     ]
                 },
                 {
                     id: 5, date: "1/10(土)", title: "朝市 & 公園散歩", icon: "🥞",
-                    summary: "KCC朝市とカピオラニ公園散策。",
+                    summary: "公園を抜けてKCC朝市までウォーキング。",
                     budgetEst: 50,
                     timeline: [
-                        { time: "08:15", type: "transport", title: "Uber/TheBus", desc: "KCCへ移動。", map: null },
+                        { time: "07:30", type: "walk", title: "徒歩 (40分)", desc: "カピオラニ公園〜海沿いを爽快にウォーキング。", map: null },
                         { time: "08:30", type: "shop", title: "KCC Farmers Market", desc: "朝食調達とショッピング。", map: "https://www.google.com/maps/search/?api=1&query=KCC+Farmers+Market" },
-                        { time: "10:30", type: "walk", title: "徒歩 (30分)", desc: "帰りはカピオラニ公園を抜けて海沿いを散歩。", map: null },
+                        { time: "10:30", type: "bus", title: "TheBus / トロリー", desc: "帰りは荷物もあるのでバスかトロリーで。", map: null },
                         { time: "PM", type: "relax", title: "フリー / 海チル", desc: "ホテルラナイで読書など。", map: null },
                         { time: "18:00", type: "walk", title: "徒歩 (5分)", desc: "クヒオ通りへ。", map: null },
                         { time: "18:10", type: "food", title: "Maguro Spot", desc: "【ディナー】ポキをテイクアウト。", map: "https://www.google.com/maps/search/?api=1&query=Maguro+Spot+Waikiki" }
@@ -267,7 +266,7 @@
                     timeline: [
                         { time: "17:00", type: "trolley", title: "ピンクライン (JCB無料)", desc: "アラモアナH前で下車し、ホテルへ直結。", map: null },
                         { time: "17:30", type: "food", title: "Signature Prime Steak", desc: "【ディナー】36階からの夜景。", map: "https://www.google.com/maps/search/?api=1&query=The+Signature+Prime+Steak+%26+Seafood" },
-                        { time: "20:00", type: "transport", title: "Uber/タクシー", desc: "帰りは安全に車で。", map: null },
+                        { time: "20:00", type: "walk", title: "徒歩 / トロリー", desc: "アラモアナセンター経由でトロリー、または歩いて帰宅。", map: null },
                         { time: "Night", type: "hotel", title: "パッキング", desc: "荷造り。", map: null }
                     ]
                 },
@@ -276,7 +275,7 @@
                     summary: "空港へ。",
                     budgetEst: 0,
                     timeline: [
-                        { time: "08:00", type: "transport", title: "Uber/タクシー", desc: "空港へ移動。", map: null },
+                        { time: "08:00", type: "transport", title: "Uber/タクシー", desc: "空港へ移動（荷物があるため車推奨）。", map: null },
                         { time: "10:55", type: "transport", title: "JL791 出発", desc: "Aloha 'Oe!", map: null }
                     ]
                 }
@@ -287,6 +286,7 @@
                 { item: "運転免許証 & 国際免許", checked: false, note: "Day7で必須" },
                 { item: "歩きやすい靴/サンダル", checked: false, note: "1時間歩ける靴" },
                 { item: "日焼け止め & 帽子", checked: false, note: "散歩の日差し対策" },
+                { item: "Holo Card (TheBus)", checked: false, note: "バス利用時(ABCストアで購入可)" },
                 { item: "エコバッグ", checked: false },
                 { item: "上着/パーカー", checked: false, note: "冷房対策" }
             ]
@@ -337,6 +337,7 @@
                         if (t.type === 'activity') { icon = '🤿'; color = 'bg-blue-50 text-blue-600'; }
                         if (t.type === 'shop') { icon = '🛍️'; color = 'bg-pink-50 text-pink-600'; }
                         if (t.type === 'trolley') { icon = '🚌'; color = 'bg-pink-100 text-pink-600'; }
+                        if (t.type === 'bus') { icon = '🚌'; color = 'bg-blue-100 text-blue-600'; }
                         if (t.type === 'walk') { icon = '🚶'; color = 'bg-green-50 text-green-600'; }
                         if (t.type === 'transport') { icon = '🚕'; color = 'bg-gray-100 text-gray-600'; }
 
