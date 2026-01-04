@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ハワイ旅程ダッシュボード 2026 (Final v8)</title>
+    <title>ハワイ旅程ダッシュボード 2026 (Final v8.1)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
@@ -90,7 +90,7 @@
                     Dashboard</button>
             </form>
             <p id="auth-error" class="text-red-500 text-xs mt-4 hidden">Incorrect credentials</p>
-            <p class="text-[10px] text-stone-300 mt-6 font-mono">System v8 (2026.1.4)</p>
+            <p class="text-[10px] text-stone-300 mt-6 font-mono">System v8.1 (2026.1.4)</p>
         </div>
     </div>
 
@@ -102,7 +102,7 @@
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v8)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v8.1)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -132,7 +132,7 @@
         console.log('Hawaii Trip Script Loaded v8.1');
 
         // Simple Auth Logic
-        window.checkAuth = function(e) {
+        window.checkAuth = function (e) {
             if (e) e.preventDefault();
             const uInput = document.getElementById('auth-user').value;
             const pInput = document.getElementById('auth-pass').value;
@@ -155,7 +155,7 @@
             }
         };
 
-        window.showApp = function() {
+        window.showApp = function () {
             const overlay = document.getElementById('auth-overlay');
             if (overlay) overlay.style.display = 'none';
 
