@@ -101,7 +101,7 @@
                 <div
                     class="flex items-center justify-center h-12 border-b border-stone-50 md:border-none md:justify-start md:h-16 md:px-4">
                     <span class="text-xl mr-2">🌺</span>
-                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v6)</span>
+                    <span class="font-bold text-lg tracking-wide text-teal-800">Hawaii 2026 (Final v7)</span>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar px-2 md:px-4">
                     <button onclick="app.navigate('dashboard')" id="nav-dashboard"
@@ -134,7 +134,11 @@
             const u = document.getElementById('auth-user').value;
             const p = document.getElementById('auth-pass').value;
             if (u === 'midorikawa' && p === 'midorikawa') {
-                localStorage.setItem('hawaii_auth_v7', 'true');
+                try {
+                    localStorage.setItem('hawaii_auth_v8', 'true');
+                } catch (err) {
+                    console.error('Storage failed', err);
+                }
                 showApp();
             } else {
                 document.getElementById('auth-error').classList.remove('hidden');
@@ -381,7 +385,7 @@
         // Check persistent auth immediately (v7 safe check)
         // Run after app and tripData are defined
         try {
-            if (localStorage.getItem('hawaii_auth_v7') === 'true') {
+            if (localStorage.getItem('hawaii_auth_v8') === 'true') {
                 showApp();
             }
         } catch (e) {
