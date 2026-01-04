@@ -322,8 +322,16 @@
             }
         };
 
-        // Initialize app on load
-        app.init();
+        // Attach to window for global access
+        window.app = app;
+        window.tripData = tripData;
+
+        // Initialize app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => app.init());
+        } else {
+            app.init();
+        }
     </script>
 </body>
 
