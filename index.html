@@ -79,15 +79,16 @@
         <div class="bg-white p-8 rounded-2xl shadow-xl border border-stone-100 w-full max-w-sm mx-4 text-center">
             <div class="text-4xl mb-4">🔒</div>
             <h2 class="text-xl font-bold text-teal-800 mb-6">Enter Passcode</h2>
-            <div class="space-y-4">
-                <input type="text" id="auth-user" placeholder="Username"
+            <form onsubmit="checkAuth(event)" class="space-y-4">
+                <input type="text" id="auth-user" name="username" autocomplete="username" placeholder="Username"
                     class="w-full p-3 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:border-teal-500 transition-colors">
-                <input type="password" id="auth-pass" placeholder="Password"
+                <input type="password" id="auth-pass" name="password" autocomplete="current-password"
+                    placeholder="Password"
                     class="w-full p-3 rounded-xl border border-stone-200 bg-stone-50 focus:outline-none focus:border-teal-500 transition-colors">
-                <button onclick="checkAuth()"
+                <button type="submit"
                     class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-teal-600/20 active:scale-95 transition-transform">Unlock
                     Dashboard</button>
-            </div>
+            </form>
             <p id="auth-error" class="text-red-500 text-xs mt-4 hidden">Incorrect credentials</p>
         </div>
     </div>
