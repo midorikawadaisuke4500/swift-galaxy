@@ -155,7 +155,7 @@
                         { time: "11:00", type: "transport", title: "Uber/Lyft", desc: "空港 → ワイキキ（約25分）\n💰 $25-40（2名）\n💡 両アプリで比較して安い方を！", map: null },
                         { time: "11:30", type: "hotel", title: "荷物預け", desc: "シェラトンへ。", map: null },
                         { time: "12:00", type: "walk", title: "徒歩 (10分)", desc: "ワイキキビーチを散策。", map: null },
-                        { time: "12:30", type: "food", title: "軽めのランチ", desc: "ABCストアなどで軽食調達。", map: null },
+                        { time: "12:30", type: "food", title: "Tropical Tribe", desc: "【ランチ】ディスカバリーベイ地下。濃厚アサイーボウル。", map: "https://www.google.com/maps/search/?api=1&query=Tropical+Tribe+Waikiki" },
                         { time: "15:00", type: "hotel", title: "チェックイン", desc: "シャワーを浴びてリフレッシュ。", map: null },
                         { time: "18:30", type: "walk", title: "徒歩 (15分)", desc: "カラカウア通りを海沿いに散歩。", map: null },
                         { time: "19:00", type: "food", title: "Arancino di Mare", desc: "【ディナー】【予約確定】マリオット1F。ウニパスタ。\n📞 808-931-6273\n👔 カジュアル（ビーチウェア不可）", map: "https://www.google.com/maps/search/?api=1&query=Arancino+di+Mare", reserved: true }
@@ -352,6 +352,15 @@
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
                             <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>💰</span> 日別予算目安 ($)</h3>
                             <div class="chart-wrapper"><canvas id="budgetChart"></canvas></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
+                            <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>🍽️</span> グルメサイト</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <a href="https://tabelog.com/hawaii/" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-orange-50 rounded-xl text-orange-600 text-xs font-bold hover:bg-orange-100 transition-colors">🍴 食べログ</a>
+                                <a href="https://www.yelp.com/search?find_loc=Honolulu%2C+HI" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-red-50 rounded-xl text-red-600 text-xs font-bold hover:bg-red-100 transition-colors">⭐ Yelp</a>
+                                <a href="https://www.tripadvisor.com/Restaurants-g60982-Honolulu_Oahu_Hawaii.html" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-green-50 rounded-xl text-green-600 text-xs font-bold hover:bg-green-100 transition-colors">🦭 TripAdvisor</a>
+                                <a href="https://www.allhawaii.jp/article/3268/" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-blue-50 rounded-xl text-blue-600 text-xs font-bold hover:bg-blue-100 transition-colors">🌊 allhawaii</a>
+                            </div>
                         </div>
                     `;
                 },
