@@ -82,6 +82,8 @@
                         class="nav-item active flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">概要</button>
                     <button onclick="app.navigate('itinerary')" id="nav-itinerary"
                         class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">旅程詳細</button>
+                    <button onclick="app.navigate('restaurants')" id="nav-restaurants"
+                        class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">グルメ</button>
                     <button onclick="app.navigate('spots')" id="nav-spots"
                         class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">スポット</button>
                     <button onclick="app.navigate('packing')" id="nav-packing"
@@ -310,6 +312,7 @@
                 c.innerHTML = '';
                 if (this.state.currentView === 'dashboard') c.innerHTML = this.views.dashboard();
                 else if (this.state.currentView === 'itinerary') c.innerHTML = this.views.itinerary();
+                else if (this.state.currentView === 'restaurants') c.innerHTML = this.views.restaurants();
                 else if (this.state.currentView === 'spots') c.innerHTML = this.views.spots();
                 else if (this.state.currentView === 'packing') c.innerHTML = this.views.packing();
             },
@@ -376,9 +379,17 @@
                     return `<div class="mb-4"><h2 class="text-xl font-bold text-teal-800">Day ${current.id}: ${current.title}</h2><p class="text-stone-500 text-xs">${current.summary}</p></div><div class="grid grid-cols-5 gap-2 pb-4 mb-2">${tabs}</div><div class="bg-stone-50 p-5 rounded-2xl border border-stone-200"><div class="mt-2">${timeline}</div></div>`;
                 },
                 spots() {
-                    const spots = tripData.days.flatMap(d => d.timeline.filter(t => ['food', 'activity', 'shop'].includes(t.type)).map(t => ({ ...t, day: d.id })));
+                    const spots = tripData.days.flatMap(d => d.timeline.filter(t => ['activity', 'shop'].includes(t.type)).map(t => ({ ...t, day: d.id, date: d.date })));
                     const unique = spots.filter((v, i, a) => a.findIndex(v2 => v2.title === v.title) === i);
-                    return `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${unique.map(s => `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full bg-stone-100 font-bold">Day ${s.day}</span></div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}</h4><p class="text-xs text-stone-600 mb-2">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`).join('')}</div>`;
+                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🏝️ アクティビティ & ショップ</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${unique.map(s => `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full bg-stone-100 font-bold">Day ${s.day} (${s.date})</span></div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`).join('')}</div>`;
+                },
+                restaurants() {
+                    const foods = tripData.days.flatMap(d => d.timeline.filter(t => t.type === 'food').map(t => ({ ...t, day: d.id, date: d.date })));
+                    const unique = foods.filter((v, i, a) => a.findIndex(v2 => v2.title === v.title) === i);
+                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🍽️ グルメ一覧</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${unique.map(s => {
+                        const reservedBadge = s.reserved ? `<span class="ml-2 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full">✓ 予約済</span>` : '';
+                        return `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 ${s.reserved ? 'border-l-4 border-l-green-500' : ''}"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-bold">Day ${s.day} (${s.date})</span><span class="text-[10px] text-stone-400">${s.time}</span></div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}${reservedBadge}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`;
+                    }).join('')}</div>`;
                 },
                 packing() {
                     return `<div class="flex flex-col gap-3">${tripData.packing.map((i, x) => `<label class="flex items-center gap-4 p-4 bg-white rounded-xl border border-stone-200"><input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-6 h-6 text-teal-600 rounded"><div class="${i.checked ? 'line-through text-stone-400' : ''} text-sm font-medium">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}</div></label>`).join('')}</div>`;
