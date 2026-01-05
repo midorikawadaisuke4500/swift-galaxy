@@ -130,6 +130,21 @@
             },
             days: [
                 {
+                    id: 0, date: "1/6(火)", title: "USJ & 関空出発", icon: "🎢",
+                    summary: "関空到着後USJで遊び、夜便でホノルルへ。",
+                    budgetEst: 150,
+                    timeline: [
+                        { time: "08:25", type: "transport", title: "関空到着 (JL221)", desc: "羽田からの国内線で関西空港第1ターミナル着。", map: null },
+                        { time: "09:30", type: "bus", title: "リムジンバス発", desc: "関空T1 → USJ\n運賃: 大人1,800円\n所要時間: 約50分", map: null },
+                        { time: "10:20", type: "activity", title: "USJ到着", desc: "ユニバーサル・スタジオ・ジャパン到着！", map: "https://www.google.com/maps/search/?api=1&query=Universal+Studios+Japan" },
+                        { time: "10:30", type: "activity", title: "USJで遊ぶ", desc: "約7時間楽しむ！\n荷物はパーク内コインロッカーへ。", map: null },
+                        { time: "18:00", type: "bus", title: "リムジンバス発", desc: "USJ → 関空T1\n所要時間: 約70分", map: null },
+                        { time: "19:10", type: "transport", title: "関空到着", desc: "第1ターミナル着。国際線へ移動。", map: null },
+                        { time: "19:30", type: "relax", title: "ダイヤモンドラウンジ", desc: "国際線ラウンジでシャワー＆夕食。\n出発までゆっくり。", map: null },
+                        { time: "22:10", type: "transport", title: "JL792 出発", desc: "関空 → ホノルル\nプレミアムエコノミー", map: null }
+                    ]
+                },
+                {
                     id: 1, date: "1/6(火)", title: "到着 & イタリアン", icon: "🛬",
                     summary: "到着日はゆっくり。夜はイタリアンで乾杯。",
                     budgetEst: 100,
@@ -278,7 +293,7 @@
         };
 
         const app = {
-            state: { currentView: 'dashboard', selectedDay: 1 },
+            state: { currentView: 'dashboard', selectedDay: 0 },
             init() { this.render(); this.initCharts(); },
             navigate(view) {
                 this.state.currentView = view;
