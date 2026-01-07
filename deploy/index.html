@@ -373,8 +373,9 @@
                                     <button onclick="app.setPaymentType('cash')" id="btn-cash" class="flex-1 p-2 rounded-lg text-xs font-bold bg-green-500 text-white">💵 現金</button>
                                     <button onclick="app.setPaymentType('card')" id="btn-card" class="flex-1 p-2 rounded-lg text-xs font-bold bg-stone-200 text-stone-600">💳 カード (+3%)</button>
                                 </div>
-                                <div class="text-center text-[10px] text-stone-400">
-                                    <span id="rate-info">レート読込中...</span>
+                                <div class="bg-stone-50 p-2 rounded-lg text-center">
+                                    <div class="text-xs text-stone-500 mb-1">適用レート</div>
+                                    <div id="rate-info" class="text-sm font-bold text-stone-700">読込中...</div>
                                 </div>
                             </div>
                         </div>
