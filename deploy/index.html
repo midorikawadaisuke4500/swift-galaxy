@@ -298,14 +298,17 @@
 
         const app = {
             state: { currentView: 'dashboard', selectedDay: 0 },
-            init() { this.render(); this.initCharts(); },
+            init() { this.render(); this.initCharts(); this.fetchExchangeRate(); },
             navigate(view) {
                 this.state.currentView = view;
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 document.getElementById(`nav-${view}`).classList.add('active');
                 window.scrollTo(0, 0);
                 this.render();
-                if (view === 'dashboard') setTimeout(() => this.initCharts(), 50);
+                if (view === 'dashboard') {
+                    setTimeout(() => this.initCharts(), 50);
+                    this.fetchExchangeRate();
+                }
             },
             render() {
                 const c = document.getElementById('app-content');
@@ -352,6 +355,28 @@
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
                             <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>💰</span> 日別予算目安 ($)</h3>
                             <div class="chart-wrapper"><canvas id="budgetChart"></canvas></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
+                            <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>💱</span> ドル→円 換算</h3>
+                            <div class="space-y-4">
+                                <div class="flex gap-2">
+                                    <div class="flex-1">
+                                        <label class="text-xs text-stone-500 block mb-1">USD金額</label>
+                                        <input type="number" id="usd-input" placeholder="0.00" class="w-full p-3 border border-stone-200 rounded-xl text-lg font-bold text-center" oninput="app.convertCurrency()">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="text-xs text-stone-500 block mb-1">JPY換算</label>
+                                        <div id="jpy-output" class="w-full p-3 bg-teal-50 border border-teal-200 rounded-xl text-lg font-bold text-center text-teal-700">¥0</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="app.setPaymentType('cash')" id="btn-cash" class="flex-1 p-2 rounded-lg text-xs font-bold bg-green-500 text-white">💵 現金</button>
+                                    <button onclick="app.setPaymentType('card')" id="btn-card" class="flex-1 p-2 rounded-lg text-xs font-bold bg-stone-200 text-stone-600">💳 カード (+3%)</button>
+                                </div>
+                                <div class="text-center text-[10px] text-stone-400">
+                                    <span id="rate-info">レート読込中...</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
                             <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>🍽️</span> グルメサイト</h3>
@@ -406,6 +431,48 @@
             },
             selectDay(id) { this.state.selectedDay = id; this.render(); },
             toggleCheck(idx) { tripData.packing[idx].checked = !tripData.packing[idx].checked; this.render(); },
+            exchangeRate: 157.0,
+            paymentType: 'cash',
+            async fetchExchangeRate() {
+                try {
+                    const res = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=JPY');
+                    const data = await res.json();
+                    if (data.rates && data.rates.JPY) {
+                        this.exchangeRate = data.rates.JPY;
+                    }
+                } catch (e) {
+                    console.log('Using fallback rate');
+                }
+                const rateInfo = document.getElementById('rate-info');
+                if (rateInfo) {
+                    rateInfo.textContent = `1 USD = ¥${this.exchangeRate.toFixed(2)} (${new Date().toLocaleTimeString('ja-JP')})`;
+                }
+                this.convertCurrency();
+            },
+            convertCurrency() {
+                const input = document.getElementById('usd-input');
+                const output = document.getElementById('jpy-output');
+                if (!input || !output) return;
+                const usd = parseFloat(input.value) || 0;
+                const fee = this.paymentType === 'card' ? 1.03 : 1;
+                const jpy = Math.round(usd * this.exchangeRate * fee);
+                output.textContent = `¥${jpy.toLocaleString()}`;
+            },
+            setPaymentType(type) {
+                this.paymentType = type;
+                const btnCash = document.getElementById('btn-cash');
+                const btnCard = document.getElementById('btn-card');
+                if (btnCash && btnCard) {
+                    if (type === 'cash') {
+                        btnCash.className = 'flex-1 p-2 rounded-lg text-xs font-bold bg-green-500 text-white';
+                        btnCard.className = 'flex-1 p-2 rounded-lg text-xs font-bold bg-stone-200 text-stone-600';
+                    } else {
+                        btnCash.className = 'flex-1 p-2 rounded-lg text-xs font-bold bg-stone-200 text-stone-600';
+                        btnCard.className = 'flex-1 p-2 rounded-lg text-xs font-bold bg-blue-500 text-white';
+                    }
+                }
+                this.convertCurrency();
+            },
             initCharts() {
                 const ctx = document.getElementById('budgetChart');
                 if (ctx) {
