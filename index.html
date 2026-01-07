@@ -427,11 +427,65 @@
                     }).join('')}</div>`;
                 },
                 packing() {
-                    return `<div class="flex flex-col gap-3">${tripData.packing.map((i, x) => `<label class="flex items-center gap-4 p-4 bg-white rounded-xl border border-stone-200"><input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-6 h-6 text-teal-600 rounded"><div class="${i.checked ? 'line-through text-stone-400' : ''} text-sm font-medium">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}</div></label>`).join('')}</div>`;
+                    const allItems = app.getPackingItems();
+                    return `
+                        <div class="mb-4 flex gap-2">
+                            <input type="text" id="new-packing-item" placeholder="新しいアイテムを追加" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
+                            <button onclick="app.addPackingItem()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
+                        </div>
+                        <div class="flex flex-col gap-3">${allItems.map((i, x) => `<label class="flex items-center gap-4 p-4 bg-white rounded-xl border border-stone-200">
+                            <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-6 h-6 text-teal-600 rounded">
+                            <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm font-medium">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}${i.custom ? '<span class="ml-2 text-[10px] text-blue-500">[追加]</span>' : ''}</div>
+                            ${i.custom ? `<button onclick="app.removePackingItem(${x})" class="text-red-400 text-xs">✕</button>` : ''}
+                        </label>`).join('')}</div>
+                    `;
                 }
             },
             selectDay(id) { this.state.selectedDay = id; this.render(); },
-            toggleCheck(idx) { tripData.packing[idx].checked = !tripData.packing[idx].checked; this.render(); },
+            getPackingItems() {
+                const saved = localStorage.getItem('packingChecks');
+                const checks = saved ? JSON.parse(saved) : {};
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                const baseItems = tripData.packing.map((item, idx) => ({
+                    ...item,
+                    checked: checks[item.item] !== undefined ? checks[item.item] : item.checked
+                }));
+                return [...baseItems, ...customItems];
+            },
+            toggleCheck(idx) {
+                const items = this.getPackingItems();
+                items[idx].checked = !items[idx].checked;
+                const checks = JSON.parse(localStorage.getItem('packingChecks') || '{}');
+                checks[items[idx].item] = items[idx].checked;
+                localStorage.setItem('packingChecks', JSON.stringify(checks));
+                if (items[idx].custom) {
+                    const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                    const customIdx = idx - tripData.packing.length;
+                    customItems[customIdx].checked = items[idx].checked;
+                    localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                }
+                this.render();
+            },
+            addPackingItem() {
+                const input = document.getElementById('new-packing-item');
+                if (!input || !input.value.trim()) return;
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                customItems.push({ item: input.value.trim(), checked: false, custom: true });
+                localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                input.value = '';
+                this.render();
+            },
+            removePackingItem(idx) {
+                const customIdx = idx - tripData.packing.length;
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                const removedItem = customItems[customIdx];
+                customItems.splice(customIdx, 1);
+                localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                const checks = JSON.parse(localStorage.getItem('packingChecks') || '{}');
+                delete checks[removedItem.item];
+                localStorage.setItem('packingChecks', JSON.stringify(checks));
+                this.render();
+            },
             exchangeRate: 157.0,
             paymentType: 'cash',
             async fetchExchangeRate() {
