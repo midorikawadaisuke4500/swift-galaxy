@@ -309,6 +309,8 @@
                     setTimeout(() => this.initCharts(), 50);
                     this.fetchExchangeRate();
                     setTimeout(() => this.initQuickAddRadio(), 100);
+                } else if (view === 'packing') {
+                    setTimeout(() => this.initPackingDrag(), 50);
                 }
             },
             render() {
@@ -461,13 +463,11 @@
                             <input type="text" id="new-packing-item" placeholder="新しいアイテムを追加" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
                             <button onclick="app.addPackingItem()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
                         </div>
-                        <div class="flex flex-col gap-2">${allItems.map((i, x) => `
-                            <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
-                                <div class="flex flex-col gap-1">
-                                    <button onclick="event.stopPropagation(); app.moveItem(${x}, -1)" class="text-stone-400 hover:text-stone-600 text-xs leading-none ${x === 0 ? 'opacity-30' : ''}">▲</button>
-                                    <button onclick="event.stopPropagation(); app.moveItem(${x}, 1)" class="text-stone-400 hover:text-stone-600 text-xs leading-none ${x === allItems.length - 1 ? 'opacity-30' : ''}">▼</button>
-                                </div>
-                                <label class="flex items-center gap-3 flex-1 cursor-pointer">
+                        <p class="text-xs text-stone-400 mb-2 text-center">💡 長押しで並び替え</p>
+                        <div id="packing-list" class="flex flex-col gap-2">${allItems.map((i, x) => `
+                            <div class="packing-item flex items-center gap-3 p-3 bg-white rounded-xl border border-stone-200 touch-none select-none" data-index="${x}">
+                                <span class="drag-handle text-stone-300 text-lg cursor-grab active:cursor-grabbing px-1">⋮⋮</span>
+                                <label class="flex items-center gap-3 flex-1 cursor-pointer" onclick="event.stopPropagation()">
                                     <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-5 h-5 text-teal-600 rounded">
                                     <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}${i.custom ? '<span class="ml-1 text-[10px] text-blue-500">[追加]</span>' : ''}</div>
                                 </label>
@@ -526,14 +526,10 @@
                 const items = this.getPackingItems();
                 const newIdx = idx + direction;
                 if (newIdx < 0 || newIdx >= items.length) return;
-
-                // Handle moving within base items vs custom items
                 const baseLen = tripData.packing.length;
                 if (idx < baseLen && newIdx < baseLen) {
-                    // Both in base - swap in original array
                     [tripData.packing[idx], tripData.packing[newIdx]] = [tripData.packing[newIdx], tripData.packing[idx]];
                 } else if (idx >= baseLen && newIdx >= baseLen) {
-                    // Both in custom - swap in localStorage
                     const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
                     const ci = idx - baseLen;
                     const ni = newIdx - baseLen;
@@ -541,6 +537,71 @@
                     localStorage.setItem('customPackingItems', JSON.stringify(customItems));
                 }
                 this.render();
+                if (this.state.currentView === 'packing') setTimeout(() => this.initPackingDrag(), 50);
+            },
+            dragState: { dragging: false, draggedIdx: null, timer: null },
+            initPackingDrag() {
+                const list = document.getElementById('packing-list');
+                if (!list) return;
+                list.querySelectorAll('.packing-item').forEach(item => {
+                    const handle = item.querySelector('.drag-handle');
+                    if (!handle) return;
+                    handle.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        const idx = parseInt(item.dataset.index);
+                        this.dragState.timer = setTimeout(() => {
+                            this.dragState.dragging = true;
+                            this.dragState.draggedIdx = idx;
+                            item.classList.add('bg-teal-50', 'border-teal-400', 'shadow-lg');
+                            item.style.transform = 'scale(1.02)';
+                            if (navigator.vibrate) navigator.vibrate(50);
+                        }, 400);
+                    });
+                    handle.addEventListener('touchmove', (e) => {
+                        if (!this.dragState.dragging) { clearTimeout(this.dragState.timer); return; }
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetItem = target?.closest('.packing-item');
+                        if (targetItem && targetItem !== item) {
+                            const targetIdx = parseInt(targetItem.dataset.index);
+                            if (targetIdx !== this.dragState.draggedIdx) {
+                                this.swapItems(this.dragState.draggedIdx, targetIdx);
+                                this.dragState.draggedIdx = targetIdx;
+                            }
+                        }
+                    });
+                    handle.addEventListener('touchend', () => {
+                        clearTimeout(this.dragState.timer);
+                        if (this.dragState.dragging) {
+                            this.dragState.dragging = false;
+                            this.dragState.draggedIdx = null;
+                            this.render();
+                            if (this.state.currentView === 'packing') setTimeout(() => this.initPackingDrag(), 50);
+                        }
+                    });
+                    handle.addEventListener('touchcancel', () => { clearTimeout(this.dragState.timer); this.dragState.dragging = false; });
+                });
+            },
+            swapItems(fromIdx, toIdx) {
+                const baseLen = tripData.packing.length;
+                if (fromIdx < baseLen && toIdx < baseLen) {
+                    [tripData.packing[fromIdx], tripData.packing[toIdx]] = [tripData.packing[toIdx], tripData.packing[fromIdx]];
+                } else if (fromIdx >= baseLen && toIdx >= baseLen) {
+                    const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                    [customItems[fromIdx - baseLen], customItems[toIdx - baseLen]] = [customItems[toIdx - baseLen], customItems[fromIdx - baseLen]];
+                    localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                }
+                const list = document.getElementById('packing-list');
+                if (list) {
+                    const items = Array.from(list.children);
+                    const fromEl = items[fromIdx], toEl = items[toIdx];
+                    if (fromEl && toEl) {
+                        fromEl.dataset.index = toIdx; toEl.dataset.index = fromIdx;
+                        if (fromIdx < toIdx) toEl.parentNode.insertBefore(fromEl, toEl.nextSibling);
+                        else toEl.parentNode.insertBefore(fromEl, toEl);
+                    }
+                }
             },
             quickAdd() {
                 const input = document.getElementById('quick-add-input');
