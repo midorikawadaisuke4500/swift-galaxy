@@ -298,7 +298,7 @@
 
         const app = {
             state: { currentView: 'dashboard', selectedDay: 0 },
-            init() { this.render(); this.initCharts(); this.fetchExchangeRate(); },
+            init() { this.render(); this.initCharts(); this.fetchExchangeRate(); setTimeout(() => this.initQuickAddRadio(), 100); },
             navigate(view) {
                 this.state.currentView = view;
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -308,6 +308,7 @@
                 if (view === 'dashboard') {
                     setTimeout(() => this.initCharts(), 50);
                     this.fetchExchangeRate();
+                    setTimeout(() => this.initQuickAddRadio(), 100);
                 }
             },
             render() {
@@ -355,6 +356,29 @@
                                 <a href="https://www.yelp.com/search?find_loc=Honolulu%2C+HI" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-red-50 rounded-xl text-red-600 text-xs font-bold hover:bg-red-100 transition-colors">⭐ Yelp</a>
                                 <a href="https://www.tripadvisor.com/Restaurants-g60982-Honolulu_Oahu_Hawaii.html" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-green-50 rounded-xl text-green-600 text-xs font-bold hover:bg-green-100 transition-colors">🦭 TripAdvisor</a>
                                 <a href="https://www.allhawaii.jp/" target="_blank" class="flex items-center justify-center gap-2 p-3 bg-blue-50 rounded-xl text-blue-600 text-xs font-bold hover:bg-blue-100 transition-colors">🌊 allhawaii</a>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
+                            <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>➕</span> クイック追加</h3>
+                            <div class="space-y-3">
+                                <div class="flex gap-2">
+                                    <input type="text" id="quick-add-input" placeholder="アイテムを入力" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
+                                    <button onclick="app.quickAdd()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
+                                </div>
+                                <div class="flex gap-2">
+                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700">
+                                        <input type="radio" name="quick-add-type" value="gourmet" class="hidden" checked>
+                                        <span class="text-xs font-bold">🍽️ グルメ</span>
+                                    </label>
+                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
+                                        <input type="radio" name="quick-add-type" value="spots" class="hidden">
+                                        <span class="text-xs font-bold">🏝️ スポット</span>
+                                    </label>
+                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
+                                        <input type="radio" name="quick-add-type" value="packing" class="hidden">
+                                        <span class="text-xs font-bold">🎒 持ち物</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
@@ -416,14 +440,18 @@
                 spots() {
                     const spots = tripData.days.flatMap(d => d.timeline.filter(t => ['activity', 'shop'].includes(t.type)).map(t => ({ ...t, day: d.id, date: d.date })));
                     const unique = spots.filter((v, i, a) => a.findIndex(v2 => v2.title === v.title) === i);
-                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🏝️ アクティビティ & ショップ</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${unique.map(s => `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full bg-stone-100 font-bold">Day ${s.day} (${s.date})</span></div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`).join('')}</div>`;
+                    const customSpots = JSON.parse(localStorage.getItem('customSpots') || '[]');
+                    const allSpots = [...unique, ...customSpots.map(s => ({ ...s, isCustom: true }))];
+                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🏝️ アクティビティ & ショップ</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${allSpots.map((s, idx) => `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 ${s.isCustom ? 'border-l-4 border-l-blue-400' : ''}"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full ${s.isCustom ? 'bg-blue-100 text-blue-600' : 'bg-stone-100'} font-bold">${s.isCustom ? '追加スポット' : `Day ${s.day} (${s.date})`}</span>${s.isCustom ? `<button onclick="app.removeCustomItem('spots', ${idx - unique.length})" class="text-red-400 hover:text-red-600 text-xs">✕</button>` : ''}</div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`).join('')}</div>`;
                 },
                 restaurants() {
                     const foods = tripData.days.flatMap(d => d.timeline.filter(t => t.type === 'food').map(t => ({ ...t, day: d.id, date: d.date })));
                     const unique = foods.filter((v, i, a) => a.findIndex(v2 => v2.title === v.title) === i);
-                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🍽️ グルメ一覧</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${unique.map(s => {
+                    const customGourmet = JSON.parse(localStorage.getItem('customGourmet') || '[]');
+                    const allFoods = [...unique, ...customGourmet.map(s => ({ ...s, isCustom: true }))];
+                    return `<h2 class="text-xl font-bold text-teal-800 mb-4">🍽️ グルメ一覧</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${allFoods.map((s, idx) => {
                         const reservedBadge = s.reserved ? `<span class="ml-2 px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded-full">✓ 予約済</span>` : '';
-                        return `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 ${s.reserved ? 'border-l-4 border-l-green-500' : ''}"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-bold">Day ${s.day} (${s.date})</span><span class="text-[10px] text-stone-400">${s.time}</span></div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}${reservedBadge}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`;
+                        return `<div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 ${s.reserved ? 'border-l-4 border-l-green-500' : s.isCustom ? 'border-l-4 border-l-orange-400' : ''}"><div class="flex justify-between mb-2"><span class="text-[10px] px-2 py-1 rounded-full ${s.isCustom ? 'bg-orange-100 text-orange-600' : 'bg-orange-100 text-orange-600'} font-bold">${s.isCustom ? '追加グルメ' : `Day ${s.day} (${s.date})`}</span>${s.isCustom ? `<button onclick="app.removeCustomItem('gourmet', ${idx - unique.length})" class="text-red-400 hover:text-red-600 text-xs">✕</button>` : `<span class="text-[10px] text-stone-400">${s.time || ''}</span>`}</div><h4 class="font-bold text-stone-800 text-sm mb-1">${s.title}${reservedBadge}</h4><p class="text-xs text-stone-600 mb-2 whitespace-pre-line">${s.desc}</p>${s.map ? `<a href="${s.map}" target="_blank" class="text-teal-600 text-xs font-bold">Map ↗</a>` : ''}</div>`;
                     }).join('')}</div>`;
                 },
                 packing() {
@@ -433,11 +461,19 @@
                             <input type="text" id="new-packing-item" placeholder="新しいアイテムを追加" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
                             <button onclick="app.addPackingItem()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
                         </div>
-                        <div class="flex flex-col gap-3">${allItems.map((i, x) => `<label class="flex items-center gap-4 p-4 bg-white rounded-xl border border-stone-200">
-                            <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-6 h-6 text-teal-600 rounded">
-                            <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm font-medium">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}${i.custom ? '<span class="ml-2 text-[10px] text-blue-500">[追加]</span>' : ''}</div>
-                            ${i.custom ? `<button onclick="app.removePackingItem(${x})" class="text-red-400 text-xs">✕</button>` : ''}
-                        </label>`).join('')}</div>
+                        <div class="flex flex-col gap-2">${allItems.map((i, x) => `
+                            <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
+                                <div class="flex flex-col gap-1">
+                                    <button onclick="event.stopPropagation(); app.moveItem(${x}, -1)" class="text-stone-400 hover:text-stone-600 text-xs leading-none ${x === 0 ? 'opacity-30' : ''}">▲</button>
+                                    <button onclick="event.stopPropagation(); app.moveItem(${x}, 1)" class="text-stone-400 hover:text-stone-600 text-xs leading-none ${x === allItems.length - 1 ? 'opacity-30' : ''}">▼</button>
+                                </div>
+                                <label class="flex items-center gap-3 flex-1 cursor-pointer">
+                                    <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-5 h-5 text-teal-600 rounded">
+                                    <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}${i.custom ? '<span class="ml-1 text-[10px] text-blue-500">[追加]</span>' : ''}</div>
+                                </label>
+                                ${i.custom ? `<button onclick="app.removePackingItem(${x})" class="text-red-400 hover:text-red-600 text-sm px-2">✕</button>` : ''}
+                            </div>
+                        `).join('')}</div>
                     `;
                 }
             },
@@ -486,17 +522,97 @@
                 localStorage.setItem('packingChecks', JSON.stringify(checks));
                 this.render();
             },
+            moveItem(idx, direction) {
+                const items = this.getPackingItems();
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= items.length) return;
+
+                // Handle moving within base items vs custom items
+                const baseLen = tripData.packing.length;
+                if (idx < baseLen && newIdx < baseLen) {
+                    // Both in base - swap in original array
+                    [tripData.packing[idx], tripData.packing[newIdx]] = [tripData.packing[newIdx], tripData.packing[idx]];
+                } else if (idx >= baseLen && newIdx >= baseLen) {
+                    // Both in custom - swap in localStorage
+                    const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                    const ci = idx - baseLen;
+                    const ni = newIdx - baseLen;
+                    [customItems[ci], customItems[ni]] = [customItems[ni], customItems[ci]];
+                    localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                }
+                this.render();
+            },
+            quickAdd() {
+                const input = document.getElementById('quick-add-input');
+                const type = document.querySelector('input[name="quick-add-type"]:checked')?.value || 'packing';
+                if (!input || !input.value.trim()) return;
+                const itemName = input.value.trim();
+
+                if (type === 'packing') {
+                    const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                    customItems.push({ item: itemName, checked: false, custom: true });
+                    localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                } else if (type === 'gourmet') {
+                    const customGourmet = JSON.parse(localStorage.getItem('customGourmet') || '[]');
+                    customGourmet.push({ title: itemName, desc: '', custom: true });
+                    localStorage.setItem('customGourmet', JSON.stringify(customGourmet));
+                } else if (type === 'spots') {
+                    const customSpots = JSON.parse(localStorage.getItem('customSpots') || '[]');
+                    customSpots.push({ title: itemName, desc: '', custom: true });
+                    localStorage.setItem('customSpots', JSON.stringify(customSpots));
+                }
+                input.value = '';
+                alert(`「${itemName}」を${type === 'packing' ? '持ち物' : type === 'gourmet' ? 'グルメ' : 'スポット'}に追加しました！`);
+            },
+            initQuickAddRadio() {
+                document.querySelectorAll('input[name="quick-add-type"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        document.querySelectorAll('input[name="quick-add-type"]').forEach(r => {
+                            const label = r.closest('label');
+                            if (r.checked) {
+                                if (r.value === 'gourmet') label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700';
+                                else if (r.value === 'spots') label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-blue-100 text-blue-700';
+                                else label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-teal-100 text-teal-700';
+                            } else {
+                                label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600';
+                            }
+                        });
+                    });
+                });
+            },
+            removeCustomItem(type, idx) {
+                if (type === 'gourmet') {
+                    const items = JSON.parse(localStorage.getItem('customGourmet') || '[]');
+                    items.splice(idx, 1);
+                    localStorage.setItem('customGourmet', JSON.stringify(items));
+                } else if (type === 'spots') {
+                    const items = JSON.parse(localStorage.getItem('customSpots') || '[]');
+                    items.splice(idx, 1);
+                    localStorage.setItem('customSpots', JSON.stringify(items));
+                }
+                this.render();
+            },
             exchangeRate: 157.0,
             paymentType: 'cash',
             async fetchExchangeRate() {
                 try {
-                    const res = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=JPY');
+                    // Try frankfurter.app first (reliable, free, no key needed)
+                    const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=JPY');
                     const data = await res.json();
                     if (data.rates && data.rates.JPY) {
                         this.exchangeRate = data.rates.JPY;
                     }
                 } catch (e) {
-                    console.log('Using fallback rate');
+                    try {
+                        // Fallback to open.er-api
+                        const res2 = await fetch('https://open.er-api.com/v6/latest/USD');
+                        const data2 = await res2.json();
+                        if (data2.rates && data2.rates.JPY) {
+                            this.exchangeRate = data2.rates.JPY;
+                        }
+                    } catch (e2) {
+                        console.log('Using fallback rate: 157');
+                    }
                 }
                 const rateInfo = document.getElementById('rate-info');
                 if (rateInfo) {
