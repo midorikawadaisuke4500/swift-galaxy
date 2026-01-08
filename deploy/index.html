@@ -462,7 +462,8 @@
                     }).join('')}</div>`;
                 },
                 packing() {
-                    const allItems = app.getPackingItems();
+                    const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                    const baseItems = app.getBasePackingItems();
                     const editMode = app.editMode || false;
                     return `
                         <div class="mb-4 flex gap-2">
@@ -474,21 +475,45 @@
                                 ${editMode ? '✓ 完了' : '✏️ 並び替え'}
                             </button>
                         </div>
-                        <div class="flex flex-col gap-2">${allItems.map((i, x) => `
-                            <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
-                                ${editMode ? `
-                                    <div class="flex gap-1">
-                                        <button onclick="app.moveItem(${x}, -1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === 0 ? 'bg-stone-100 text-stone-300' : 'bg-teal-100 text-teal-600'} text-lg font-bold" ${x === 0 ? 'disabled' : ''}>↑</button>
-                                        <button onclick="app.moveItem(${x}, 1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === allItems.length - 1 ? 'bg-stone-100 text-stone-300' : 'bg-teal-100 text-teal-600'} text-lg font-bold" ${x === allItems.length - 1 ? 'disabled' : ''}>↓</button>
-                                    </div>
-                                ` : ''}
-                                <label class="flex items-center gap-3 flex-1 cursor-pointer">
-                                    <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCheck(${x})" class="w-5 h-5 text-teal-600 rounded">
-                                    <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}${i.custom ? '<span class="ml-1 text-[10px] text-blue-500">[追加]</span>' : ''}</div>
-                                </label>
-                                ${i.custom ? `<button onclick="app.removePackingItem(${x})" class="text-red-400 hover:text-red-600 text-sm px-2">✕</button>` : ''}
-                            </div>
-                        `).join('')}</div>
+                        
+                        ${customItems.length > 0 ? `
+                        <div class="mb-4">
+                            <h3 class="text-sm font-bold text-blue-600 mb-2 flex items-center gap-2">📌 追加アイテム</h3>
+                            <div class="flex flex-col gap-2">${customItems.map((i, x) => `
+                                <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-200">
+                                    ${editMode ? `
+                                        <div class="flex gap-1">
+                                            <button onclick="app.moveCustomItem(${x}, -1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === 0 ? 'bg-stone-100 text-stone-300' : 'bg-blue-100 text-blue-600'} text-lg font-bold" ${x === 0 ? 'disabled' : ''}>↑</button>
+                                            <button onclick="app.moveCustomItem(${x}, 1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === customItems.length - 1 ? 'bg-stone-100 text-stone-300' : 'bg-blue-100 text-blue-600'} text-lg font-bold" ${x === customItems.length - 1 ? 'disabled' : ''}>↓</button>
+                                        </div>
+                                    ` : ''}
+                                    <label class="flex items-center gap-3 flex-1 cursor-pointer">
+                                        <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleCustomCheck(${x})" class="w-5 h-5 text-blue-600 rounded">
+                                        <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm">${i.item}</div>
+                                    </label>
+                                    <button onclick="app.removeCustomItem2(${x})" class="text-red-400 hover:text-red-600 text-sm px-2">✕</button>
+                                </div>
+                            `).join('')}</div>
+                        </div>
+                        ` : ''}
+                        
+                        <div>
+                            <h3 class="text-sm font-bold text-stone-600 mb-2 flex items-center gap-2">📋 基本アイテム</h3>
+                            <div class="flex flex-col gap-2">${baseItems.map((i, x) => `
+                                <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
+                                    ${editMode ? `
+                                        <div class="flex gap-1">
+                                            <button onclick="app.moveBaseItem(${x}, -1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === 0 ? 'bg-stone-100 text-stone-300' : 'bg-teal-100 text-teal-600'} text-lg font-bold" ${x === 0 ? 'disabled' : ''}>↑</button>
+                                            <button onclick="app.moveBaseItem(${x}, 1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === baseItems.length - 1 ? 'bg-stone-100 text-stone-300' : 'bg-teal-100 text-teal-600'} text-lg font-bold" ${x === baseItems.length - 1 ? 'disabled' : ''}>↓</button>
+                                        </div>
+                                    ` : ''}
+                                    <label class="flex items-center gap-3 flex-1 cursor-pointer">
+                                        <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="app.toggleBaseCheck(${x})" class="w-5 h-5 text-teal-600 rounded">
+                                        <div class="flex-1 ${i.checked ? 'line-through text-stone-400' : ''} text-sm">${i.item}${i.note ? `<span class="block text-[10px] text-orange-500">${i.note}</span>` : ''}</div>
+                                    </label>
+                                </div>
+                            `).join('')}</div>
+                        </div>
                     `;
                 },
                 memo() {
@@ -535,6 +560,47 @@
                     checked: checks[item.item] !== undefined ? checks[item.item] : item.checked
                 }));
                 return [...baseItems, ...customItems];
+            },
+            getBasePackingItems() {
+                const saved = localStorage.getItem('packingChecks');
+                const checks = saved ? JSON.parse(saved) : {};
+                return tripData.packing.map((item) => ({
+                    ...item,
+                    checked: checks[item.item] !== undefined ? checks[item.item] : item.checked
+                }));
+            },
+            toggleCustomCheck(idx) {
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                customItems[idx].checked = !customItems[idx].checked;
+                localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                this.render();
+            },
+            toggleBaseCheck(idx) {
+                const checks = JSON.parse(localStorage.getItem('packingChecks') || '{}');
+                const item = tripData.packing[idx];
+                checks[item.item] = !(checks[item.item] !== undefined ? checks[item.item] : item.checked);
+                localStorage.setItem('packingChecks', JSON.stringify(checks));
+                this.render();
+            },
+            moveCustomItem(idx, direction) {
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= customItems.length) return;
+                [customItems[idx], customItems[newIdx]] = [customItems[newIdx], customItems[idx]];
+                localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                this.render();
+            },
+            moveBaseItem(idx, direction) {
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= tripData.packing.length) return;
+                [tripData.packing[idx], tripData.packing[newIdx]] = [tripData.packing[newIdx], tripData.packing[idx]];
+                this.render();
+            },
+            removeCustomItem2(idx) {
+                const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
+                customItems.splice(idx, 1);
+                localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                this.render();
             },
             toggleCheck(idx) {
                 const items = this.getPackingItems();
