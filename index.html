@@ -544,6 +544,7 @@
                     [customItems[ci], customItems[ni]] = [customItems[ni], customItems[ci]];
                     localStorage.setItem('customPackingItems', JSON.stringify(customItems));
                 }
+                this.render();
             },
             editMode: false,
             toggleEditMode() {
