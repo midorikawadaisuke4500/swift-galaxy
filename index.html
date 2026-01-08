@@ -563,7 +563,20 @@
             getBasePackingItems() {
                 const saved = localStorage.getItem('packingChecks');
                 const checks = saved ? JSON.parse(saved) : {};
-                return tripData.packing.map((item) => ({
+                const savedOrder = localStorage.getItem('basePackingOrder');
+                let items = [...tripData.packing];
+
+                // Apply saved order if exists
+                if (savedOrder) {
+                    const order = JSON.parse(savedOrder);
+                    items = order.map(name => tripData.packing.find(i => i.item === name)).filter(Boolean);
+                    // Add any new items that weren't in the saved order
+                    tripData.packing.forEach(item => {
+                        if (!order.includes(item.item)) items.push(item);
+                    });
+                }
+
+                return items.map((item) => ({
                     ...item,
                     checked: checks[item.item] !== undefined ? checks[item.item] : item.checked
                 }));
@@ -576,8 +589,9 @@
             },
             toggleBaseCheck(idx) {
                 const checks = JSON.parse(localStorage.getItem('packingChecks') || '{}');
-                const item = tripData.packing[idx];
-                checks[item.item] = !(checks[item.item] !== undefined ? checks[item.item] : item.checked);
+                const baseItems = this.getBasePackingItems();
+                const item = baseItems[idx];
+                checks[item.item] = !item.checked;
                 localStorage.setItem('packingChecks', JSON.stringify(checks));
                 this.render();
             },
@@ -590,9 +604,13 @@
                 this.render();
             },
             moveBaseItem(idx, direction) {
+                const baseItems = this.getBasePackingItems();
                 const newIdx = idx + direction;
-                if (newIdx < 0 || newIdx >= tripData.packing.length) return;
-                [tripData.packing[idx], tripData.packing[newIdx]] = [tripData.packing[newIdx], tripData.packing[idx]];
+                if (newIdx < 0 || newIdx >= baseItems.length) return;
+                [baseItems[idx], baseItems[newIdx]] = [baseItems[newIdx], baseItems[idx]];
+                // Save the new order
+                const order = baseItems.map(i => i.item);
+                localStorage.setItem('basePackingOrder', JSON.stringify(order));
                 this.render();
             },
             removeCustomItem2(idx) {
