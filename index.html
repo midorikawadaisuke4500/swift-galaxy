@@ -8,6 +8,8 @@
     <title>ハワイ旅程ダッシュボード 2026 (Final v9)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
         rel="stylesheet">
 
@@ -107,6 +109,22 @@
 
     <script>
         console.log('Hawaii Trip Script Loaded v9 (No Auth)');
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummy",
+            authDomain: "hawaii-trip-dashboard-aa782.firebaseapp.com",
+            projectId: "hawaii-trip-dashboard-aa782",
+            storageBucket: "hawaii-trip-dashboard-aa782.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Trip sharing state
+        let currentTripId = null;
+        let unsubscribe = null;
 
         const tripData = {
             meta: {
@@ -328,6 +346,19 @@
                     const outbound = tripData.meta.flights.outbound;
                     const returnFlight = tripData.meta.flights.return;
                     return `
+                        <div class="bg-gradient-to-r from-purple-500 to-indigo-500 p-5 rounded-2xl shadow-sm mb-6 text-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold flex items-center gap-2 text-sm"><span>🔗</span> リアルタイム共有</h3>
+                                <span id="sync-status" class="text-xs opacity-75">${currentTripId ? '同期中' : 'ローカル'}</span>
+                            </div>
+                            ${currentTripId ? `
+                                <p class="text-xs opacity-90 mb-3">共有ID: ${currentTripId}</p>
+                                <button onclick="app.copyShareLink()" class="w-full py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-bold transition-colors">📋 リンクをコピー</button>
+                            ` : `
+                                <p class="text-xs opacity-90 mb-3">共有リンクを作成して、旅程を他の人とリアルタイムで共有できます</p>
+                                <button onclick="app.createShareLink()" class="w-full py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-bold transition-colors">🚀 共有を開始</button>
+                            `}
+                        </div>
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100 mb-6">
                             <h3 class="font-bold text-stone-700 mb-4 flex items-center gap-2 text-sm"><span>💱</span> ドル→円 換算</h3>
                             <div class="space-y-4">
@@ -851,6 +882,96 @@
                         }
                     });
                 }
+            },
+            // Firestore Sharing Functions
+            async createShareLink() {
+                try {
+                    const tripId = this.generateTripId();
+                    await this.saveToFirestore(tripId);
+                    currentTripId = tripId;
+                    this.setupRealtimeSync(tripId);
+
+                    const url = `${window.location.origin}${window.location.pathname}?trip=${tripId}`;
+                    await navigator.clipboard.writeText(url);
+                    alert(`共有リンクを作成しました！\n\nリンクがクリップボードにコピーされました。\n\nID: ${tripId}`);
+                    this.render();
+                } catch (e) {
+                    console.error('Share error:', e);
+                    alert('共有リンクの作成に失敗しました');
+                }
+            },
+            async copyShareLink() {
+                const url = `${window.location.origin}${window.location.pathname}?trip=${currentTripId}`;
+                await navigator.clipboard.writeText(url);
+                alert('リンクをコピーしました！');
+            },
+            generateTripId() {
+                return 'trip_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            },
+            getSharedData() {
+                return {
+                    packingChecks: localStorage.getItem('packingChecks') || '{}',
+                    customPackingItems: localStorage.getItem('customPackingItems') || '[]',
+                    basePackingOrder: localStorage.getItem('basePackingOrder') || '[]',
+                    customMemo: localStorage.getItem('customMemo') || '[]',
+                    customGourmet: localStorage.getItem('customGourmet') || '[]',
+                    customSpots: localStorage.getItem('customSpots') || '[]',
+                    updatedAt: new Date().toISOString()
+                };
+            },
+            async saveToFirestore(tripId) {
+                const data = this.getSharedData();
+                await db.collection('trips').doc(tripId).set(data);
+                console.log('Saved to Firestore:', tripId);
+            },
+            async loadFromFirestore(tripId) {
+                const doc = await db.collection('trips').doc(tripId).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    localStorage.setItem('packingChecks', data.packingChecks || '{}');
+                    localStorage.setItem('customPackingItems', data.customPackingItems || '[]');
+                    localStorage.setItem('basePackingOrder', data.basePackingOrder || '[]');
+                    localStorage.setItem('customMemo', data.customMemo || '[]');
+                    localStorage.setItem('customGourmet', data.customGourmet || '[]');
+                    localStorage.setItem('customSpots', data.customSpots || '[]');
+                    console.log('Loaded from Firestore:', tripId);
+                    return true;
+                }
+                return false;
+            },
+            setupRealtimeSync(tripId) {
+                if (unsubscribe) unsubscribe();
+                unsubscribe = db.collection('trips').doc(tripId).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const localData = this.getSharedData();
+                        // Only update if remote is newer
+                        if (data.updatedAt > localData.updatedAt) {
+                            localStorage.setItem('packingChecks', data.packingChecks || '{}');
+                            localStorage.setItem('customPackingItems', data.customPackingItems || '[]');
+                            localStorage.setItem('basePackingOrder', data.basePackingOrder || '[]');
+                            localStorage.setItem('customMemo', data.customMemo || '[]');
+                            localStorage.setItem('customGourmet', data.customGourmet || '[]');
+                            localStorage.setItem('customSpots', data.customSpots || '[]');
+                            console.log('Synced from Firestore');
+                            this.render();
+                        }
+                    }
+                });
+            },
+            syncToFirestore() {
+                if (currentTripId) {
+                    this.saveToFirestore(currentTripId);
+                }
+            }
+        };
+
+        // Override localStorage setItem to auto-sync
+        const originalSetItem = localStorage.setItem.bind(localStorage);
+        localStorage.setItem = function (key, value) {
+            originalSetItem(key, value);
+            if (currentTripId && ['packingChecks', 'customPackingItems', 'basePackingOrder', 'customMemo', 'customGourmet', 'customSpots'].includes(key)) {
+                app.syncToFirestore();
             }
         };
 
@@ -859,10 +980,27 @@
         window.tripData = tripData;
 
         // Initialize app when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => app.init());
-        } else {
+        async function initApp() {
+            // Check for shared trip ID in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tripId = urlParams.get('trip');
+
+            if (tripId) {
+                currentTripId = tripId;
+                const loaded = await app.loadFromFirestore(tripId);
+                if (loaded) {
+                    app.setupRealtimeSync(tripId);
+                    console.log('Joined shared trip:', tripId);
+                }
+            }
+
             app.init();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
         }
     </script>
 </body>
