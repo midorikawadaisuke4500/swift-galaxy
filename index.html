@@ -535,16 +535,25 @@
                 const newIdx = idx + direction;
                 if (newIdx < 0 || newIdx >= items.length) return;
                 const baseLen = tripData.packing.length;
-                if (idx < baseLen && newIdx < baseLen) {
+
+                // Check if both items are in the same group
+                const fromIsBase = idx < baseLen;
+                const toIsBase = newIdx < baseLen;
+
+                if (fromIsBase && toIsBase) {
+                    // Both in base items - swap in tripData
                     [tripData.packing[idx], tripData.packing[newIdx]] = [tripData.packing[newIdx], tripData.packing[idx]];
-                } else if (idx >= baseLen && newIdx >= baseLen) {
+                    this.render();
+                } else if (!fromIsBase && !toIsBase) {
+                    // Both in custom items - swap in localStorage
                     const customItems = JSON.parse(localStorage.getItem('customPackingItems') || '[]');
                     const ci = idx - baseLen;
                     const ni = newIdx - baseLen;
                     [customItems[ci], customItems[ni]] = [customItems[ni], customItems[ci]];
                     localStorage.setItem('customPackingItems', JSON.stringify(customItems));
+                    this.render();
                 }
-                this.render();
+                // If crossing boundary (base to custom or vice versa), do nothing - can't mix
             },
             editMode: false,
             toggleEditMode() {
