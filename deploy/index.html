@@ -88,6 +88,8 @@
                         class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">スポット</button>
                     <button onclick="app.navigate('packing')" id="nav-packing"
                         class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">持ち物</button>
+                    <button onclick="app.navigate('memo')" id="nav-memo"
+                        class="nav-item flex-shrink-0 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap">メモ</button>
                 </div>
             </div>
         </div>
@@ -319,6 +321,7 @@
                 else if (this.state.currentView === 'restaurants') c.innerHTML = this.views.restaurants();
                 else if (this.state.currentView === 'spots') c.innerHTML = this.views.spots();
                 else if (this.state.currentView === 'packing') c.innerHTML = this.views.packing();
+                else if (this.state.currentView === 'memo') c.innerHTML = this.views.memo();
             },
             views: {
                 dashboard() {
@@ -365,18 +368,22 @@
                                     <input type="text" id="quick-add-input" placeholder="アイテムを入力" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
                                     <button onclick="app.quickAdd()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
                                 </div>
-                                <div class="flex gap-2">
-                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700">
+                                <div class="grid grid-cols-4 gap-2">
+                                    <label class="flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700">
                                         <input type="radio" name="quick-add-type" value="gourmet" class="hidden" checked>
                                         <span class="text-xs font-bold">🍽️ グルメ</span>
                                     </label>
-                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
+                                    <label class="flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
                                         <input type="radio" name="quick-add-type" value="spots" class="hidden">
                                         <span class="text-xs font-bold">🏝️ スポット</span>
                                     </label>
-                                    <label class="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
+                                    <label class="flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
                                         <input type="radio" name="quick-add-type" value="packing" class="hidden">
                                         <span class="text-xs font-bold">🎒 持ち物</span>
+                                    </label>
+                                    <label class="flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600">
+                                        <input type="radio" name="quick-add-type" value="memo" class="hidden">
+                                        <span class="text-xs font-bold">📝 メモ</span>
                                     </label>
                                 </div>
                             </div>
@@ -483,6 +490,39 @@
                             </div>
                         `).join('')}</div>
                     `;
+                },
+                memo() {
+                    const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                    const editMode = app.memoEditMode || false;
+                    return `
+                        <h2 class="text-xl font-bold text-teal-800 mb-4">📝 メモ</h2>
+                        <div class="mb-4 flex gap-2">
+                            <input type="text" id="new-memo-item" placeholder="新しいメモを追加" class="flex-1 p-3 border border-stone-200 rounded-xl text-sm">
+                            <button onclick="app.addMemo()" class="px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold">追加</button>
+                        </div>
+                        ${memos.length > 0 ? `
+                        <div class="mb-3 text-center">
+                            <button onclick="app.toggleMemoEditMode()" class="px-4 py-2 ${editMode ? 'bg-orange-500' : 'bg-stone-200'} ${editMode ? 'text-white' : 'text-stone-600'} rounded-xl text-xs font-bold">
+                                ${editMode ? '✓ 完了' : '✏️ 並び替え'}
+                            </button>
+                        </div>` : ''}
+                        <div class="flex flex-col gap-2">${memos.map((m, x) => `
+                            <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
+                                ${editMode ? `
+                                    <div class="flex gap-1">
+                                        <button onclick="app.moveMemo(${x}, -1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === 0 ? 'bg-stone-100 text-stone-300' : 'bg-purple-100 text-purple-600'} text-lg font-bold" ${x === 0 ? 'disabled' : ''}>↑</button>
+                                        <button onclick="app.moveMemo(${x}, 1)" class="w-10 h-10 flex items-center justify-center rounded-lg ${x === memos.length - 1 ? 'bg-stone-100 text-stone-300' : 'bg-purple-100 text-purple-600'} text-lg font-bold" ${x === memos.length - 1 ? 'disabled' : ''}>↓</button>
+                                    </div>
+                                ` : ''}
+                                <label class="flex items-center gap-3 flex-1 cursor-pointer">
+                                    <input type="checkbox" ${m.checked ? 'checked' : ''} onchange="app.toggleMemoCheck(${x})" class="w-5 h-5 text-purple-600 rounded">
+                                    <div class="flex-1 ${m.checked ? 'line-through text-stone-400' : ''} text-sm">${m.text}</div>
+                                </label>
+                                <button onclick="app.removeMemo(${x})" class="text-red-400 hover:text-red-600 text-sm px-2">✕</button>
+                            </div>
+                        `).join('')}</div>
+                        ${memos.length === 0 ? '<p class="text-center text-stone-400 text-sm mt-8">メモはまだありません</p>' : ''}
+                    `;
                 }
             },
             selectDay(id) { this.state.selectedDay = id; this.render(); },
@@ -578,9 +618,48 @@
                     const customSpots = JSON.parse(localStorage.getItem('customSpots') || '[]');
                     customSpots.push({ title: itemName, desc: '', custom: true });
                     localStorage.setItem('customSpots', JSON.stringify(customSpots));
+                } else if (type === 'memo') {
+                    const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                    memos.push({ text: itemName, checked: false });
+                    localStorage.setItem('customMemo', JSON.stringify(memos));
                 }
                 input.value = '';
-                alert(`「${itemName}」を${type === 'packing' ? '持ち物' : type === 'gourmet' ? 'グルメ' : 'スポット'}に追加しました！`);
+                const typeNames = { packing: '持ち物', gourmet: 'グルメ', spots: 'スポット', memo: 'メモ' };
+                alert(`「${itemName}」を${typeNames[type]}に追加しました！`);
+            },
+            memoEditMode: false,
+            toggleMemoEditMode() {
+                this.memoEditMode = !this.memoEditMode;
+                this.render();
+            },
+            addMemo() {
+                const input = document.getElementById('new-memo-item');
+                if (!input || !input.value.trim()) return;
+                const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                memos.push({ text: input.value.trim(), checked: false });
+                localStorage.setItem('customMemo', JSON.stringify(memos));
+                input.value = '';
+                this.render();
+            },
+            removeMemo(idx) {
+                const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                memos.splice(idx, 1);
+                localStorage.setItem('customMemo', JSON.stringify(memos));
+                this.render();
+            },
+            toggleMemoCheck(idx) {
+                const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                memos[idx].checked = !memos[idx].checked;
+                localStorage.setItem('customMemo', JSON.stringify(memos));
+                this.render();
+            },
+            moveMemo(idx, direction) {
+                const memos = JSON.parse(localStorage.getItem('customMemo') || '[]');
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= memos.length) return;
+                [memos[idx], memos[newIdx]] = [memos[newIdx], memos[idx]];
+                localStorage.setItem('customMemo', JSON.stringify(memos));
+                this.render();
             },
             initQuickAddRadio() {
                 document.querySelectorAll('input[name="quick-add-type"]').forEach(radio => {
@@ -588,11 +667,12 @@
                         document.querySelectorAll('input[name="quick-add-type"]').forEach(r => {
                             const label = r.closest('label');
                             if (r.checked) {
-                                if (r.value === 'gourmet') label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700';
-                                else if (r.value === 'spots') label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-blue-100 text-blue-700';
-                                else label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-teal-100 text-teal-700';
+                                if (r.value === 'gourmet') label.className = 'flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-orange-100 text-orange-700';
+                                else if (r.value === 'spots') label.className = 'flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-blue-100 text-blue-700';
+                                else if (r.value === 'memo') label.className = 'flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-purple-100 text-purple-700';
+                                else label.className = 'flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-teal-100 text-teal-700';
                             } else {
-                                label.className = 'flex-1 flex items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600';
+                                label.className = 'flex items-center justify-center gap-1 p-2 rounded-lg cursor-pointer bg-stone-100 text-stone-600';
                             }
                         });
                     });
